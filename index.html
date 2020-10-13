@@ -3,10 +3,20 @@
 
 <style>
 
+    body {
+        display: flex;
+        flex-direction: column;
+    }
 
+    #main-row {
+        display: flex;
+        flex-direction: row;
+        height: 80%;
+    }
 
     .link {
         margin-top: 10px;
+        text-decoration: none;
     }
 
 </style>
@@ -16,25 +26,33 @@
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <link rel="stylesheet" href="styles/w3.css">
+    <link rel="stylesheet" href="styles/global.css">
 
 </head>
 
 <body class="w3-light-gray">
 
-    <div class="w3-container w3-bar w3-blue-gray">
+    <header class="w3-container w3-bar w3-blue-gray">
         <h2>Home</h2>
-    </div> 
+    </header> 
 
+    <div id="main-row">
 
+        <div class="w3-container w3-sidebar w3-gray" style="width: 15%;">
+            <div class="link"><a href="zork.html">Zork: A Re-Creation</a></div>
+            <div class="link"><a href="blog.html">Blog</a></div>
+        </div>
 
-    <div class="w3-container w3-sidebar w3-gray" style="width: 15%;">
-        <div class="link"><a href="zork.html">Zork</a></div>
-        <div class="link"><a href="blog.html">Blog</a></div>
+        <div class="w3-container" style="margin-left: 15%;">
+            <h1>Hello</h1>
+        </div>
+
     </div>
 
-    <div class="w3-container" style="margin-left: 15%;>
-        <h1>Hello</h1>
-    </div>
+    <footer class="w3-container w3-black">
+        <h2>Footer</h2>
+    </footer>
+
 
 
 </body>
