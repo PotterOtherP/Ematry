@@ -1,0 +1,361 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Zork</title>
+    <meta charset="utf-8">
+
+</head>
+
+
+
+<style>
+
+    body {
+        background-color: #f0f8ff;
+        background-color: rgb(220, 228, 245);
+        font-size: 16px;
+    }
+
+    #gameContainer {
+        width: 70%;
+        height: 100%;
+        display: flex;
+        flex-direction: column;
+        max-width: 700px;
+        min-width: 300px;
+        margin-left: 30px;
+
+    }
+
+    .gameTextArea {
+
+        padding: 7px;
+        background: gray;
+        color: white;
+        font-family: monospace;
+
+    }
+
+    #gameHeaderArea {
+        display: flex;
+        flex-direction: row;
+        justify-content: space-between;
+        width: 100%;
+        height: 30px;
+        border-top-left-radius: 5px;
+        border-top-right-radius: 5px;
+    }
+
+    #gameStatsArea {
+        display: flex;
+        flex-direction: row;
+        justify-content: space-between;
+        width: 40%;
+    }
+
+    #descriptionArea {
+        width: 100%;
+        height: auto;
+        min-height: 100px;
+        max-height: 200px;
+        overflow: auto;
+    }
+
+    #divider {
+
+        width: 100%;
+        height: 2px;
+        background: black;
+        padding-right: 7px;
+        padding-left: 7px;
+
+    }
+
+
+    #gameArea {
+        width: 100%;
+        height: auto;
+        min-height: 200px;
+        max-height: 600px;
+        border-bottom-left-radius: 5px;
+        border-bottom-right-radius: 5px;
+        overflow: auto;
+
+    }
+
+    #previousInputArea {
+        width: 100%;
+        height: 20px;
+        overflow: auto;
+        color: #00ffff;
+    }
+
+    #inputTextArea {
+        width: 100%;
+        border-radius: 5px;
+        padding: 7px;
+        margin-top: 10px;
+        border: 1px;
+        font-family: monospace;
+        font-size: 16px;
+        background: black;
+        color: white;
+
+    }
+
+    @media (max-width: 1000px) {
+        #gameContainer {
+        width: 100%;
+        height: 100%;
+        display: flex;
+        flex-direction: column;
+
+    }
+    
+
+</style>
+
+
+<body>
+
+    <div id="gameContainer">
+        <h2>Zork I: The Great Underground Empire - A Complete Re-Creation</h2>
+        <p>This classic game, the first of a franchise developed by Infocom, was very popular in the 1980's. It is a
+           text-based interactive fiction game, in which the player navigates the game
+           world by entering typed commands.
+           <br><br>
+           The goal of this project is to reconstruct the game
+           from scratch, with all new source code written in JavaScript.
+           <br><br>
+           For the intrepid adventurer who seeks the great Underground, countless wonders await: trolls, thieves, 
+           treasures galore, quantities of water, piles of plastic, unknown viscous materials, and small chunks of vitreous slag.
+           Your journey begins here!</p>
+        <div id="gameHeaderArea" class="gameTextArea">
+            <div id="gameLocationArea"></div>
+            <div id="gameStatsArea">
+                <div id="gameTurnsArea">Turns: 0</div>
+                <div id="gameScoreArea">Score: 0</div>
+            </div>
+        </div>
+        <div id="descriptionArea" class="gameTextArea"></div>
+        <div id="divider"></div>
+        <div id="previousInputArea" class="gameTextArea"></div>
+        <div id="gameArea" class="gameTextArea"></div>
+        <input type="text" id="inputTextArea" name="playerInput" tabindex="0" spellcheck="false" autofocus="true">
+    </div>
+
+    <input type="button" id="restartButton" value="Restart" style="margin-top: 20px; margin-left: 30px">
+    <div style="margin-top: 100px"><a href="index.html">Home</a></div>
+
+    <script type="text/javascript" src="zork/zconstants.js"></script>
+    <script type="text/javascript" src="zork/mapstrings.js"></script>
+    <script type="text/javascript" src="zork/objectstrings.js"></script>
+    <script type="text/javascript" src="zork/gamestrings.js"></script>
+    <script type="text/javascript" src="zork/zstate.js"></script>
+
+    <script type="text/javascript">
+
+        /*
+
+            TODO
+
+            - Implement all flags in updateEvents()
+            - Account for all passages that can be open or closed
+
+
+
+        */
+        
+        let state = new GameState();
+        let inputLog = [];
+        let stringLog = "";
+        let randomLog = [];
+
+        function clearOutput()
+        {
+            document.getElementById("gameArea").innerText = "";
+        }
+
+        let restoringGame = false;
+
+        function getRandom(int)
+        {
+            if (restoringGame)
+            {
+
+                if (randomLog.length < 1)
+                {
+                    console.log("Error restoring game: random number log mismatch");
+                    output("Problem detected with save file, recommend deleting.");
+                    return 0;
+                }
+                
+                let result = randomLog.shift();
+
+                return result;
+            }
+
+            else
+            {
+                let result = Math.floor(Math.random() * int);
+                randomLog.push(result);
+                return result;
+            }
+        }
+
+
+        function output(str)
+        {
+            if (restoringGame)
+                return;
+
+            if (state.directObject != null && state.indirectObject != null)
+            {
+                str = str.replace(/ENEMY/g, state.directObject.name);
+                str = str.replace(/ITEM/g,  state.indirectObject.name);
+                str = str.replace(/WEAPON/g,  state.indirectObject.name);
+            }
+
+            let txt = document.getElementById("gameArea").innerText;
+
+            if (txt === "")
+            {
+                txt = str;
+            }
+
+            else
+            {
+                txt += "\n" + str;
+            }
+
+            document.getElementById("gameArea").innerText = txt;
+            
+        }
+
+        function outputLocation(str)
+        {
+            if (state.playerInBoat)
+                str += ", in the magic boat";
+            document.getElementById("gameLocationArea").innerText = str;
+        }
+
+        function outputDescription(str)
+        {
+            let txt = document.getElementById("descriptionArea").innerText;
+
+            if (txt === "")
+            {
+                txt = str;
+            }
+
+            else
+            {
+                txt += "\n" + str;
+            }
+
+            document.getElementById("descriptionArea").innerText = txt;
+        }
+
+        function outputPreviousInput(str)
+        {
+            document.getElementById("previousInputArea").innerText = ">> " + str;
+
+        }
+
+        function outputScore(str)
+        {
+            document.getElementById("gameScoreArea").innerText = "Score: " + str;
+        }
+
+        function outputTurns(str)
+        {
+            document.getElementById("gameTurnsArea").innerText = "Turns: " + str;
+        }
+
+        // Function from MDN Web Storage API guide
+        function storageAvailable(type)
+        {
+            var storage;
+            try
+            {
+                storage = window[type];
+                var x = '__storage_test__';
+                storage.setItem(x, x);
+                storage.removeItem(x);
+                return true;
+            }
+            catch(e)
+            {
+                return e instanceof DOMException &&
+                (
+                    // everything except Firefox
+                    e.code === 22 ||
+                    // Firefox
+                    e.code === 1014 ||
+                    // test field name too, because code might not be present
+                    // everything except Firefox
+                    e.name === 'QuotaExceededError' ||
+                    // Firefox
+                    e.name === 'NS_ERROR_DOM_QUOTA_REACHED'
+                ) &&
+                // acknowledge QuotaExceededError only if there's something already stored
+                (storage && storage.length !== 0);
+            }
+        }
+
+        const usingLocalStorage = storageAvailable('localStorage');
+        if (!usingLocalStorage)
+            console.log("Local storage not available, games will be saved to game memory.");
+
+    </script>
+
+    <script type="text/javascript" src="zork/zobject.js"></script>
+    <script type="text/javascript" src="zork/actor.js"></script>
+    <script type="text/javascript" src="zork/container.js"></script>
+    <script type="text/javascript" src="zork/feature.js"></script>
+    <script type="text/javascript" src="zork/item.js"></script>
+    <script type="text/javascript" src="zork/surface.js"></script>
+    <script type="text/javascript" src="zork/passage.js"></script>
+    <script type="text/javascript" src="zork/room.js"></script>
+    <script type="text/javascript" src="zork/zsetup.js"></script>
+    <script type="text/javascript" src="zork/zinput.js"></script>
+    <script type="text/javascript" src="zork/zupdate.js"></script>
+    <script type="text/javascript" src="zork/zsave.js"></script>
+
+    <script type="text/javascript">
+
+        state.playerLocation = Location.WEST_OF_HOUSE;
+
+        const savedGames = new Map();
+
+        let startingState = Object.create(state);
+        startingState = Object.assign(startingState, state);
+
+        const startingObjectList = new Map();
+        for (let sourceObject of objectList.values())
+        {
+            let obj = Object.create(sourceObject);
+            obj = Object.assign(obj, sourceObject);
+
+            startingObjectList.set(obj.name, obj);
+        }
+
+        deleteSaveFromLocalStorage("undoSave");
+        // deleteSaveFromLocalStorage("autoSave");
+    
+        refreshInventories();
+        fillCurrentObjectList();
+        fillDictionary();
+        
+        outputLocation(westOfHouse.name);
+        westOfHouse.lookAround();
+
+        state.resetInput();
+        inputTextArea.addEventListener("change", getPlayerInput);
+        restartButton.addEventListener("click", restart);
+
+    </script>
+
+
+</body>
+</html>
