@@ -1,0 +1,19 @@
+#gameArena {
+    margin-left: 15%;
+    height: 92%;
+    width: 85%;
+    position: fixed;
+    bottom: 0; 
+    display: flex;
+    flex-direction: row;
+    overflow: auto;
+}
+
+.link {
+    margin-top: 10px;
+    text-decoration: none;
+}
+
+.w3-sidebar {
+    min-width: 190px;
+}

@@ -1038,13 +1038,14 @@ function updateEvents()
     
     if (cyclops.unconscious)
     {
+        state.cyclopsShutsTrapDoor = false;
         cyclops.presenceString = ObjectStrings.CYCLOPS_SLEEP_1;
         cyclops_treasure.setOpen();
     }
 
     else
     {
-        state.cyclopsShutsTrapDoor = false;
+        state.cyclopsShutsTrapDoor = true;
         cyclops.presenceString = ObjectStrings.CYCLOPS_2;
         cyclops_treasure.setClosed();
     }

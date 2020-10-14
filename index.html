@@ -1,21 +1,6 @@
 <!DOCTYPE html>
 <html>
 
-<style>
-
-    body {
-        display: flex;
-        flex-direction: column;
-    }
-
-
-    .link {
-        margin-top: 10px;
-        text-decoration: none;
-    }
-
-</style>
-
 <head>
     <title>Ematry</title>
     <meta charset="utf-8">
@@ -27,29 +12,18 @@
 
 <body class="w3-light-gray">
 
-    <div class="w3-row">
-    <div class="w3-col w3-container w3-bar w3-blue-gray" style="z-index: 0;">
-        <h2>Home</h2>
+    <div class="w3-bar w3-blue-gray" style="position: fixed; top: 0; height: 8%;">
+        <a href="index.html" class="w3-bar-item w3-button" style="text-decoration: none;"><h2>Home</h2></a>
+    </div> 
+
+
+
+    <div class="w3-container w3-sidebar w3-gray" style="width: 15%; height: 92%; bottom: 0;">
+        <div class="link"><a href="zork.html">Zork: A Re-Creation</a></div>
+        <div class="link"><a href="blog.html">Blog</a></div>
     </div>
-    </div>
 
-<div class="w3-row">
-
-        <div class="w3-col w3-container w3-sidebar w3-gray" style="width: 15%;">
-            <div class="link"><a href="zork.html">Zork: A Re-Creation</a></div>
-            <div class="link"><a href="blog.html">Blog</a></div>
-        </div>
-
-        <div class="w3-col w3-container" style="margin-left: 15%;">
-            <h1>Hello</h1>
-        </div>
-
-</div>
-
-<div class="w3-row">
-    <div class="w3-col w3-container w3-bar w3-blue-gray" style="z-index: 0;">
-        <h2>Home</h2>
-    </div>
+    <div class="w3-container w3-leftbar w3-topbar w3-border-black" id="gameArena">
     </div>
 
 
