@@ -17,3 +17,28 @@
 .w3-sidebar {
     min-width: 190px;
 }
+
+@media screen and (max-width: 920px) {
+    .w3-sidebar {
+        display: none;
+    }
+
+    #zorkGameContainer {
+        margin-left: 0;
+        min-width: 400px;
+    }
+
+    #zorkInfoContainer {
+        display: none;
+    }
+
+    #gameArena {
+        width: 100%;
+        margin-left: 0;
+        margin-right: 0;
+    }
+
+    #gameStatsArea {
+        width: 50%;
+    }
+}
