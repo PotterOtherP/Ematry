@@ -7,6 +7,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <link rel="stylesheet" href="styles/w3.css">
     <link rel="stylesheet" href="styles/global.css">
+    <script type="text/javascript" src="util.js"></script>
 
 </head>
 
@@ -14,11 +15,19 @@
 
     <div class="w3-bar w3-blue-gray" style="position: fixed; top: 0; height: 8%;">
         <a href="index.html" class="w3-bar-item w3-button" style="text-decoration: none;"><h2>Home</h2></a>
+        <button class="w3-bar-item w3-blue-gray w3-right w3-xxlarge" id="mobile-menu-button" onclick="mobile_menu_open()">☰</button>
+    </div>
+
+    <div class="w3-sidebar w3-mobile w3-gray" id="mobile-menu">
+        <button onclick="mobile_menu_close()" class="w3-button w3-bar-item w3-large w3-right w3-gray">Close &times;</button>
+        <p>Zoom</p>
+        <p>Schwartz</p>
+        <p>Profigliano</p>
     </div> 
 
 
 
-    <div class="w3-container w3-sidebar w3-gray" style="width: 15%; height: 92%; bottom: 0;">
+    <div class="w3-container w3-sidebar w3-gray" style="width: 15%; height: 92%; bottom: 0;" id="web-menu">
         <div class="link"><a href="zork.html">Zork: A Re-Creation</a></div>
         <div class="link"><a href="blog.html">Blog</a></div>
     </div>

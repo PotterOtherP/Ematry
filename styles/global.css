@@ -9,6 +9,15 @@
     overflow: auto;
 }
 
+#mobile-menu {
+    display: none;
+}
+
+#mobile-menu-button {
+    display: none;
+    
+}
+
 .link {
     margin-top: 10px;
     text-decoration: none;
@@ -19,8 +28,12 @@
 }
 
 @media screen and (max-width: 1100px) {
-    .w3-sidebar {
+    #web-menu {
         display: none;
+    }
+
+    #mobile-menu-button {
+        display: block;
     }
 
     #zorkGameContainer {
@@ -40,5 +53,12 @@
 
     #gameStatsArea {
         width: 50%;
+    }
+}
+
+@media screen and (min-width: 1101px)
+{
+    #mobile-menu {
+        display: none!important;
     }
 }
