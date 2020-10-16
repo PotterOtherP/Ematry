@@ -16,6 +16,15 @@
 
     <div class="w3-bar w3-blue-gray" style="position: fixed; top: 0; height: 8%;">
         <a href="index.html" class="w3-bar-item w3-button" style="text-decoration: none;"><h2>Home</h2></a>
+        <button class="w3-bar-item w3-blue-gray w3-right w3-xxlarge" id="mobile-menu-button" onclick="mobile_menu_open()">☰</button>
+    </div>
+
+    <div class="w3-sidebar w3-mobile w3-blue-gray" id="mobile-menu">
+        
+        <div class="link"><button onclick="mobile_menu_close()" class="w3-button w3-bar-item w3-large w3-right w3-blue-gray">&times;</button></div>
+        <div class="link w3-xlarge w3-hover-gray"><a href="index.html" style="text-decoration: none;">Home</a></div>
+        <div class="link w3-xlarge w3-hover-gray"><a href="zork.html" style="text-decoration: none;">Zork</a></div>
+        <div class="link w3-xlarge w3-hover-gray"><a href="blog.html" style="text-decoration: none;">Blog</a></div>
     </div> 
 
 
