@@ -82,6 +82,8 @@ function updateGame()
         {
             output("You inspect your surroundings.");
             currentRoom.lookAround();
+            let text = document.getElementById("descriptionArea").innerHTML;
+            document.getElementById("zorkMobileOutputArea").innerHTML = text;
             return;
         } // break;
 
@@ -322,6 +324,8 @@ function updateStandard()
                 }
 
                 nextRoom.lookAround();
+                let text = document.getElementById("descriptionArea").innerHTML;
+                document.getElementById("zorkMobileOutputArea").innerHTML = text;
 
                 if (nextRoom.firstVisit)
                     nextRoom.firstVisit = false;
@@ -854,6 +858,8 @@ function updateDarkness()
                 }
 
                 nextRoom.lookAround();
+                let text = document.getElementById("descriptionArea").innerHTML;
+                document.getElementById("zorkMobileOutputArea").innerHTML = text;
 
                 if (nextRoom.firstVisit)
                     nextRoom.firstVisit = false;
@@ -967,10 +973,16 @@ function updateDeath()
                     state.playerLocation = Location.TORCH_ROOM;
                     output("\n");
                     torchRoom.lookAround();
+                    let text = document.getElementById("descriptionArea").innerHTML;
+                    document.getElementById("zorkMobileOutputArea").innerHTML = text;
+
                     return;
                 }
 
                 nextRoom.lookAround();
+                let text = document.getElementById("descriptionArea").innerHTML;
+                document.getElementById("zorkMobileOutputArea").innerHTML = text;
+
 
                 if (nextRoom.firstVisit)
                     nextRoom.firstVisit = false;

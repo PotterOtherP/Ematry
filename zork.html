@@ -8,7 +8,7 @@
     <link rel="stylesheet" href="styles/w3.css">
     <link rel="stylesheet" href="styles/zork.css">
     <link rel="stylesheet" href="styles/global.css">
-    <script type="text/javascript" src="util.js"></script>
+    <script type="text/javascript" src="scripts/util.js"></script>
 
 </head>
 
@@ -36,7 +36,8 @@
 
     <div class="w3-container w3-leftbar w3-topbar w3-border-black" id="gameArena">
         <div id="zorkGameContainer">
-        <h2>Zork I: The Great Underground Empire</h2>
+        <div id="zorkWebTitle"><h2>Zork I: The Great Underground Empire</h2></div>
+        <div id="zorkMobileTitle"><h2>Zork I Remake</h2></div>
         
         <div id="gameHeaderArea" class="gameTextArea">
             <div id="gameLocationArea"></div>
@@ -49,6 +50,7 @@
         <div id="divider"></div>
         <div id="previousInputArea" class="gameTextArea"></div>
         <div id="gameArea" class="gameTextArea"></div>
+        <div id="zorkMobileOutputArea" class="gameTextArea"></div>
         <input type="text" id="inputTextArea" name="playerInput" tabindex="0" spellcheck="false" autofocus="true">
         </div>
 
@@ -150,7 +152,8 @@
                 txt += "\n" + str;
             }
 
-            document.getElementById("gameArea").innerText = txt;
+            document.getElementById("gameArea").innerHTML = txt;
+            document.getElementById("zorkMobileOutputArea").innerHTML = txt;
             
         }
 
@@ -271,6 +274,8 @@
         
         outputLocation(westOfHouse.name);
         westOfHouse.lookAround();
+        let text = document.getElementById("descriptionArea").innerHTML;
+        document.getElementById("zorkMobileOutputArea").innerHTML = text;
 
         state.resetInput();
         inputTextArea.addEventListener("change", getPlayerInput);
