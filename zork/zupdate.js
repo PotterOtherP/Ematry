@@ -82,8 +82,8 @@ function updateGame()
         {
             output("You inspect your surroundings.");
             currentRoom.lookAround();
-            let text = document.getElementById("descriptionArea").innerHTML;
-            document.getElementById("zorkMobileOutputArea").innerHTML = text;
+            let mobMarkup = document.getElementById("descriptionArea").innerHTML;
+            document.getElementById("zorkMobileOutputArea").innerHTML = mobMarkup;
             return;
         } // break;
 
@@ -324,8 +324,8 @@ function updateStandard()
                 }
 
                 nextRoom.lookAround();
-                let text = document.getElementById("descriptionArea").innerHTML;
-                document.getElementById("zorkMobileOutputArea").innerHTML = text;
+                let mobMarkup = document.getElementById("descriptionArea").innerHTML;
+                document.getElementById("zorkMobileOutputArea").innerHTML = mobMarkup;
 
                 if (nextRoom.firstVisit)
                     nextRoom.firstVisit = false;
@@ -858,8 +858,8 @@ function updateDarkness()
                 }
 
                 nextRoom.lookAround();
-                let text = document.getElementById("descriptionArea").innerHTML;
-                document.getElementById("zorkMobileOutputArea").innerHTML = text;
+                let mobMarkup = document.getElementById("descriptionArea").innerHTML;
+                document.getElementById("zorkMobileOutputArea").innerHTML = mobMarkup;
 
                 if (nextRoom.firstVisit)
                     nextRoom.firstVisit = false;
@@ -980,8 +980,8 @@ function updateDeath()
                 }
 
                 nextRoom.lookAround();
-                let text = document.getElementById("descriptionArea").innerHTML;
-                document.getElementById("zorkMobileOutputArea").innerHTML = text;
+                let mobMarkup = document.getElementById("descriptionArea").innerHTML;
+                document.getElementById("zorkMobileOutputArea").innerHTML = mobMarkup;
 
 
                 if (nextRoom.firstVisit)

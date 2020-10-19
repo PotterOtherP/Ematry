@@ -140,20 +140,20 @@
                 str = str.replace(/WEAPON/g,  state.indirectObject.name);
             }
 
-            let txt = document.getElementById("gameArea").innerText;
+            let markup = document.getElementById("gameArea").innerHTML;
 
-            if (txt === "")
+            if (markup === "")
             {
-                txt = str;
+                markup = str;
             }
 
             else
             {
-                txt += "\n" + str;
+                markup += "<br>" + str;
             }
 
-            document.getElementById("gameArea").innerHTML = txt;
-            document.getElementById("zorkMobileOutputArea").innerHTML = txt;
+            document.getElementById("gameArea").innerHTML = markup;
+            document.getElementById("zorkMobileOutputArea").innerHTML = markup;
             
         }
 
@@ -166,19 +166,19 @@
 
         function outputDescription(str)
         {
-            let txt = document.getElementById("descriptionArea").innerText;
+            let markup = document.getElementById("descriptionArea").innerHTML;
 
-            if (txt === "")
+            if (markup === "")
             {
-                txt = str;
+                markup = str;
             }
 
             else
             {
-                txt += "\n" + str;
+                markup += "<br>" + str;
             }
 
-            document.getElementById("descriptionArea").innerText = txt;
+            document.getElementById("descriptionArea").innerHTML = markup;
         }
 
         function outputPreviousInput(str)
