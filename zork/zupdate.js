@@ -973,8 +973,9 @@ function updateDeath()
                     state.playerLocation = Location.TORCH_ROOM;
                     output("\n");
                     torchRoom.lookAround();
-                    let text = document.getElementById("descriptionArea").innerHTML;
-                    document.getElementById("zorkMobileOutputArea").innerHTML = text;
+                    let mobMarkup = document.getElementById("descriptionArea").innerHTML;
+                    document.getElementById("zorkMobileOutputArea").innerHTML = mobMarkup;
+
 
                     return;
                 }
@@ -1551,10 +1552,10 @@ function playerDiesForReal()
 
     state.playerDead = true;
 
-    outputLocation(entranceToHades.name);
     output(GameStrings.PLAYER_DIES_FOR_REAL);
     output(GameStrings.DEAD_LOOK);
-    output(entranceToHades.description);
+
+    relocatePlayer(Location.ENTRANCE_TO_HADES);
 
 }
 
