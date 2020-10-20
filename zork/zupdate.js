@@ -905,11 +905,11 @@ function updateDeath()
             if (state.playerLocation === Location.ALTAR)
             {
                 output(GameStrings.DEAD_PRAY_ALTAR);
-                state.playerPreviousLocation = state.playerLocation;
-                state.playerLocation = Location.FOREST_WEST;
                 state.playerDead = false;
                 state.playerHitPoints = 1;
                 state.cyclopsShutsTrapDoor = false;
+
+                relocatePlayer(Location.FOREST_WEST);
             }
 
             else
@@ -1535,12 +1535,11 @@ function playerDies()
         output(GameStrings.PLAYER_DIES);
         output("\n");
 
-        state.playerPreviousLocation = state.playerLocation;
-        state.playerLocation = FOREST[getRandom(FOREST.length)];
         state.playerHitPoints = MAX_HIT_POINTS;
-        darknessCheck();
-        worldMap.get(state.playerLocation).lookAround();
-        outputLocation(worldMap.get(state.playerLocation).name);
+
+        let landingSpot = FOREST[getRandom(FOREST.length)];
+
+        relocatePlayer(landingSpot);
     }
 
 }
