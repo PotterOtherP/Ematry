@@ -2,6 +2,10 @@ function updateGame()
 {
 
     let currentRoom = worldMap.get(state.playerLocation);
+    if (currentRoom.firstVisit)
+    {
+        currentRoom.firstVisit = false;
+    }
 
     // Special cases: being in the boat and messing with the shaft basket
 
@@ -194,29 +198,35 @@ function updateGame()
     currentRoom = worldMap.get(state.playerLocation);
     currentRoom.lookAround();
 
-    if (currentRoom.firstVisit)
-    {
-        console.log("We are here");
-        currentRoom.firstVisit = false;
-        let mobMarkup = zorkMobileOutputArea.innerHTML;
-        let descMarkup = descriptionArea.innerHTML;
-        let webMarkup = gameArea.innerHTML;
-
-        if (webMarkup !== "")
-        {
-            console.log("Let's add the description");
-            zorkMobileOutputArea.innerHTML = "First visit! " + mobMarkup; 
-        }
-
-    }
+    updateActors();
+    //outputMobile();
 
     stringLog += state.completePlayerInput + "|";
     ++state.turns;
-    updateActors();
     updateItems();
     updateEvents();
     updateScore();
 
+}
+
+function outputMobile()
+{
+    zorkMobileOutputArea.innerHTML = "";
+    let mobMarkup = "";
+
+    if (gameArea.innerHTML === "" || worldMap.get(state.playerLocation).firstVisit)
+    {
+        mobMarkup += descriptionArea.innerHTML;
+
+        if (gameArea.innerHTML !== "")
+            mobMarkup += "<br>";
+    }
+
+    mobMarkup += gameArea.innerHTML;
+
+
+
+    zorkMobileOutputArea.innerHTML = mobMarkup;
 }
 
 

@@ -85,6 +85,7 @@ function getPlayerInput()
     outputPreviousInput(rawInput);
     state.completePlayerInput = processedInput;
     parsePlayerInput();
+    outputMobile();
 
 }
 
