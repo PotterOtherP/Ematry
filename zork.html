@@ -130,6 +130,8 @@
 
         function output(str)
         {
+            str = str.replace(/\n/g, "<br>");
+
             if (restoringGame)
                 return;
 
@@ -166,6 +168,8 @@
 
         function outputDescription(str)
         {
+            str = str.replace(/\n/g, "<br>");
+
             let markup = document.getElementById("descriptionArea").innerHTML;
 
             if (markup === "")

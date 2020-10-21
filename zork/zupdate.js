@@ -192,10 +192,23 @@ function updateGame()
     }
 
     currentRoom = worldMap.get(state.playerLocation);
-    
-    outputLocation(currentRoom.name);
-
     currentRoom.lookAround();
+
+    if (currentRoom.firstVisit)
+    {
+        console.log("We are here");
+        currentRoom.firstVisit = false;
+        let mobMarkup = zorkMobileOutputArea.innerHTML;
+        let descMarkup = descriptionArea.innerHTML;
+        let webMarkup = gameArea.innerHTML;
+
+        if (webMarkup !== "")
+        {
+            console.log("Let's add the description");
+            zorkMobileOutputArea.innerHTML = "First visit! " + mobMarkup; 
+        }
+
+    }
 
     stringLog += state.completePlayerInput + "|";
     ++state.turns;
@@ -326,9 +339,6 @@ function updateStandard()
                 nextRoom.lookAround();
                 let mobMarkup = document.getElementById("descriptionArea").innerHTML;
                 document.getElementById("zorkMobileOutputArea").innerHTML = mobMarkup;
-
-                if (nextRoom.firstVisit)
-                    nextRoom.firstVisit = false;
 
                 if (nextRoom.roomID === "GAS_ROOM")
                 {
@@ -861,9 +871,6 @@ function updateDarkness()
                 let mobMarkup = document.getElementById("descriptionArea").innerHTML;
                 document.getElementById("zorkMobileOutputArea").innerHTML = mobMarkup;
 
-                if (nextRoom.firstVisit)
-                    nextRoom.firstVisit = false;
-
             }
 
         } break;
@@ -909,7 +916,7 @@ function updateDeath()
                 state.playerHitPoints = 1;
                 state.cyclopsShutsTrapDoor = false;
 
-                relocatePlayer(Location.FOREST_WEST);
+                relocatePlayerNoClear(Location.FOREST_WEST);
             }
 
             else
@@ -984,10 +991,6 @@ function updateDeath()
                 let mobMarkup = document.getElementById("descriptionArea").innerHTML;
                 document.getElementById("zorkMobileOutputArea").innerHTML = mobMarkup;
 
-
-                if (nextRoom.firstVisit)
-                    nextRoom.firstVisit = false;
-
             }
 
         } break; 
@@ -1010,10 +1013,10 @@ function updateActors()
     riverCurrent.riverCurrentTurn();
     songbird.songbirdTurn();
     spirits.spiritsTurn();
-    swordGlow.swordGlowTurn();
     thief.thiefTurn();
     troll.trollTurn();
     vampireBat.vampireBatTurn();
+    swordGlow.swordGlowTurn();
 
     if (state.playerHitPoints <= 0)
         playerDies();
@@ -1539,7 +1542,7 @@ function playerDies()
 
         let landingSpot = FOREST[getRandom(FOREST.length)];
 
-        relocatePlayer(landingSpot);
+        relocatePlayerNoClear(landingSpot);
     }
 
 }
@@ -1554,7 +1557,7 @@ function playerDiesForReal()
     output(GameStrings.PLAYER_DIES_FOR_REAL);
     output(GameStrings.DEAD_LOOK);
 
-    relocatePlayer(Location.ENTRANCE_TO_HADES);
+    relocatePlayerNoClear(Location.ENTRANCE_TO_HADES);
 
 }
 

@@ -288,10 +288,15 @@ class Room {
                 continue;
             }
 
-            if ( (g.isActor() || g.isFeature()) && g.presenceString !== "")
+            if (g.isFeature() && g.presenceString !== "")
             {
                 outputDescription(g.presenceString);
             }
+
+            // if (g.isActor() && g.presenceString !== "")
+            // {
+            //     output(g.presenceString);
+            // }
 
             if (g.isItem())
             {

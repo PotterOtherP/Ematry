@@ -1280,6 +1280,16 @@ let rope = new Item("rope", Location.ATTIC);
 rope.initialPresenceString = ObjectStrings.INIT_ROPE;
 rope.weight = ROPE_WEIGHT;
 
+let ruinedPainting = new Item("ruined painting", Location.NULL_LOCATION);
+ruinedPainting.initialPresenceString = "There is a worthless piece of canvas here.";
+ruinedPainting.presenceString = "There is a worthless piece of canvas here.";
+ruinedPainting.weight = PAINTING_WEIGHT;
+ruinedPainting.altNames.add("painting");
+ruinedPainting.altNames.add("canvas");
+ruinedPainting.altNames.add("worthless canvas");
+ruinedPainting.altNames.add("worthless piece of canvas");
+ruinedPainting.altNames.add("piece of canvas");
+
 let rustyKnife = new Item("rusty knife", Location.MAZE_5);
 rustyKnife.altNames.add("knife");
 rustyKnife.altNames.add("rusty");
@@ -1734,6 +1744,7 @@ objectList.set(nest.name, nest);
 objectList.set(pump.name, pump);
 objectList.set(puncturedBoat.name, puncturedBoat);
 objectList.set(rope.name, rope);
+objectList.set(ruinedPainting.name, ruinedPainting);
 objectList.set(rustyKnife.name, rustyKnife);
 objectList.set(screwdriver.name, screwdriver);
 objectList.set(shovel.name, shovel);

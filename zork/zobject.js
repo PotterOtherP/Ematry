@@ -213,7 +213,10 @@ class GameObject {
 
                     case "painting":
                     {
-
+                        output("Congratulations! Unlike the other vandals, who merely stole the artist's masterpieces, "
+                            + "you have destroyed one.");
+                        painting.location = Location.NULL_LOCATION;
+                        ruinedPainting.location = state.playerLocation;
                     } break;
 
                     default:
