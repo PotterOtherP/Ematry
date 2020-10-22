@@ -712,6 +712,23 @@ function fillCurrentObjectList()
     currentObjects.set("air", air);
     currentObjects.set("sky", air);
 
+    switch (state.playerLocation)
+    {
+        case "FRIGID_RIVER_1":
+        case "FRIGID_RIVER_2":
+        case "FRIGID_RIVER_3":
+        case "FRIGID_RIVER_4":
+        case "FRIGID_RIVER_5":
+        case "RESERVOIR":
+        case "STREAM":
+        {
+            currentObjects.delete("ground");
+            currentObjects.delete("floor");
+        } break;
+
+        default: {} break;
+    }
+
     for (let g of objectList.values())
     {
         // Objects in the player's location or inventory

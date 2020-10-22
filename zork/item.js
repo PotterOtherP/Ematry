@@ -816,51 +816,158 @@ class Item extends GameObject {
 
     throwObject()
     {
-        output("Throwing that item around!");
-
         switch(state.indirectObject.name)
         {
             case "river water":
             {
-                output("Throwin' it at the river!");
+                switch (this.name)
+                {
+                    case "ancient map":
+                    case "bird's nest":
+                    case "black book":
+                    case "brown sack":
+                    case "clove of garlic":
+                    case "glass bottle":
+                    case "guidebook":
+                    case "leaflet":
+                    case "matchbook":
+                    case "tan label":
+                    case "ZORK owner's manual":
+                    {
+                        output("The " + this.name + " floats for a moment, then sinks.");
+                        this.location = Location.NULL_LOCATION;
+                    } break;
+
+                    case "pile of leaves":
+                    {
+                        output("The leaves float along the water and disperse.");
+                        this.location = Location.NULL_LOCATION;
+                    }
+
+                    case "red buoy":
+                    {
+                        output("The buoy bobbles out onto the water.");
+                        this.location = state.playerLocation;
+                    } break;
+
+                    default:
+                    {
+                        output("The " + this.name + " splashes into the water and is gone forever.");
+                        this.location = Location.NULL_LOCATION;
+                    } break;
+                }
+
             } break;
 
             case "reservoir water":
             {
-                output("Throwin' it at the reservoir!");
+                switch (this.name)
+                {
+                    case "ancient map":
+                    case "bird's nest":
+                    case "black book":
+                    case "brown sack":
+                    case "clove of garlic":
+                    case "glass bottle":
+                    case "guidebook":
+                    case "leaflet":
+                    case "matchbook":
+                    case "tan label":
+                    case "ZORK owner's manual":
+                    {
+                        output("The " + this.name + " floats for a moment, then sinks.");
+                        this.location = Location.RESERVOIR_EMPTY;
+                    } break;
+
+                    case "pile of leaves":
+                    {
+                        output("The leaves float along the water and disperse.");
+                        this.location = Location.NULL_LOCATION;
+                    }
+
+                    case "red buoy":
+                    {
+                        output("The buoy bobbles out onto the water.");
+                        this.location = state.playerLocation;
+                    } break;
+
+                    default:
+                    {
+                        output("The " + this.name + " splashes into the water and disappears.");
+                        this.location = Location.RESERVOIR_EMPTY;
+                    } break;
+                }
+
             } break;
 
             case "chasm":
             {
-                output("Throwin' it at the chasm!");
+                output("The " + this.name + " drops out of sight into the chasm.");
+                this.location = Location.NULL_LOCATION;
             } break;
 
             default:
             {
-                output("Throwin' it at nothin' in particular!");
+                switch(this.name)
+                {
+                    case "jewel-encrusted egg":
+                    {
+                        output("Your rather indelicate handling of the egg has caused it some damage, "
+                            + "although you have succeeded in opening it.");
+                        breakEgg();
+                    } break;
+
+                    case "elvish sword":
+                    case "nasty knife":
+                    case "rusty knife":
+                    case "stiletto":
+                    {
+                        switch (state.indirectObject.name)
+                        {
+                            case "troll":
+                            {
+                                output("The troll, who is remarkable coordinated, catches the " + this.name
+                                    + "and eats it hungrily. Poor troll, he dies from an internal hemmorhage "
+                                    + "and his carcass disappears in a sinister black fog.");
+                                this.location = state.playerLocation;
+                                troll.alive = false;
+                                troll.trollDies();
+                            } break;
+
+                            case "thief":
+                            {
+
+                            } break;
+
+                            case "cyclops":
+                            {
+
+                            } break;
+
+                            case "vampire bat":
+                            {
+
+                            } break;
+
+                            default:
+                            {
+                                output("Throwing a sharp object would be highly disappointing to your first-grade teacher.");
+                            } break;
+
+                        }
+                    } break;
+
+                    default:
+                    {
+                        output("Thrown.");
+                        this.location = state.playerLocation;
+                    } break;
+                }
+
             } break;
         }
 
-        switch(this.name)
-        {
-            case "jewel-encrusted egg":
-            {
-                output("Tossin' that egg around! Dangerous!");
-            } break;
-
-            case "elvish sword":
-            case "nasty knife":
-            case "rusty knife":
-            case "stiletto":
-            {
-
-            } break;
-
-            default:
-            {
-                output("Throwin' it up and down! Nasty!");
-            } break;
-        }
+        
 
     }
 

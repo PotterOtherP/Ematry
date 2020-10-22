@@ -1394,7 +1394,7 @@ class Actor extends GameObject {
 
     trollDies()
     {
-        console.log("trollDies() called");
+        // console.log("trollDies() called");
         this.alive = false;
 
         for (let it of this.inventory)
