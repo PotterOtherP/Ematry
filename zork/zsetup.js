@@ -1356,7 +1356,8 @@ wrench.weight = WRENCH_WEIGHT;
 
 // Features, containers and surfaces
 
-
+let air = new Feature("air", Location.NULL_LOCATION);
+air.altNames.add("sky");
 
 let altar = new Surface("altar", Location.ALTAR);
 altar.inventoryID = Location.ON_ALTAR;
@@ -1392,6 +1393,10 @@ carpet.altNames.add("oriental carpet");
 carpet.altNames.add("rug");
 carpet.boardString = ObjectStrings.CARPET_SIT_1;
 carpet.lookUnderString = ObjectStrings.CARPET_LOOK_UNDER;
+
+let chasmObj = new Feature("chasm", Location.CHASM);
+chasmObj.altLocations.add(Location.EAST_OF_CHASM);
+chasmObj.altNames.add("chasm");
 
 let coalMachine = new Container("machine", Location.MACHINE_ROOM);
 coalMachine.inventoryID = Location.INSIDE_COAL_MACHINE;
@@ -1444,6 +1449,9 @@ let grating = new Feature("grating", Location.GRATING_ROOM);
 grating.altNames.add("grate");
 grating.examineString = "The grating is closed.";
 grating.lookInString = "You can see only darkness through the grating.";
+
+let ground = new Feature("ground", Location.NULL_LOCATION);
+ground.altNames.add("floor");
 
 let hotBell = new Feature("red hot brass bell", Location.NULL_LOCATION);
 hotBell.altNames.add("red hot bell");
@@ -1505,6 +1513,23 @@ mailbox.moveString = "You can't move the small mailbox.";
 mailbox.inventory.add(leaflet);
 mailbox.inventoryID = Location.INSIDE_MAILBOX;
 mailbox.capacity = 10;
+
+let mazeObj = new Feature("maze", Location.MAZE_1);
+mazeObj.altLocations.add(Location.MAZE_2);
+mazeObj.altLocations.add(Location.MAZE_3);
+mazeObj.altLocations.add(Location.MAZE_4);
+mazeObj.altLocations.add(Location.MAZE_5);
+mazeObj.altLocations.add(Location.MAZE_6);
+mazeObj.altLocations.add(Location.MAZE_7);
+mazeObj.altLocations.add(Location.MAZE_8);
+mazeObj.altLocations.add(Location.MAZE_9);
+mazeObj.altLocations.add(Location.MAZE_10);
+mazeObj.altLocations.add(Location.MAZE_11);
+mazeObj.altLocations.add(Location.MAZE_12);
+mazeObj.altLocations.add(Location.MAZE_13);
+mazeObj.altLocations.add(Location.MAZE_14);
+mazeObj.altLocations.add(Location.MAZE_15);
+mazeObj.examineString = "The maze consists of many twisty little passages, all alike.";
 
 let mirror = new Feature("mirror", Location.MIRROR_ROOM_SOUTH);
 mirror.altLocations.add(Location.MIRROR_ROOM_NORTH);
@@ -1756,6 +1781,7 @@ objectList.set(tube.name, tube);
 objectList.set(uselessLantern.name, uselessLantern);
 objectList.set(wrench.name, wrench);
 
+objectList.set(air.name, air);
 objectList.set(altar.name, altar);
 objectList.set(atticTable.name, atticTable);
 objectList.set(brokenMirror.name, brokenMirror);
@@ -1764,6 +1790,7 @@ objectList.set(buttonYellow.name, buttonYellow);
 objectList.set(buttonBrown.name, buttonBrown);
 objectList.set(buttonRed.name, buttonRed);
 objectList.set(carpet.name, carpet);
+objectList.set(chasmObj.name, chasmObj);
 objectList.set(coalMachine.name, coalMachine);
 objectList.set(coalMachineSwitch.name, coalMachineSwitch);
 objectList.set(damBolt.name, damBolt);
@@ -1773,6 +1800,7 @@ objectList.set(engravings.name, engravings);
 objectList.set(forest.name, forest);
 objectList.set(gas.name, gas);
 objectList.set(grating.name, grating);
+objectList.set(ground.name, ground);
 objectList.set(house.name, house);
 objectList.set(houseBoards.name, houseBoards);
 objectList.set(houseExteriorDoor.name, houseExteriorDoor);
@@ -1780,6 +1808,7 @@ objectList.set(houseExteriorWindow.name, houseExteriorWindow);
 objectList.set(houseWindow.name, houseWindow);
 objectList.set(kitchenTable.name, kitchenTable);
 objectList.set(mailbox.name, mailbox);
+objectList.set(mazeObj.name, mazeObj);
 objectList.set(mirror.name, mirror);
 objectList.set(mountains.name, mountains);
 objectList.set(pedestal.name, pedestal);

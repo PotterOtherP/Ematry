@@ -224,7 +224,10 @@ function outputMobile()
 
     mobMarkup += gameArea.innerHTML;
 
-
+    if (state.playerAction === Action.LOOK)
+    {
+        mobMarkup = descriptionArea.innerHTML;
+    }
 
     zorkMobileOutputArea.innerHTML = mobMarkup;
 }
@@ -290,6 +293,7 @@ function updateStandard()
         case "SMELL": { state.directObject.smell(); } break;
         case "TAKE": {state.directObject.take(); } break;
         case "TALK_TO": { state.directObject.talk(); } break;
+        case "THROW": {state.directObject.throwObject(); } break;
         case "TIE": {state.directObject.tie(); } break;
         case "TOUCH": { state.directObject.touch(); } break;
         case "TURN": { state.directObject.turn(); } break;

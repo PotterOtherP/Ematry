@@ -100,7 +100,7 @@ class GameObject {
         this.giveString = "";
         this.lockString = "";
         this.putString = "There's no good surface on the " + this.name + ".";
-        this.throwString = "";
+        this.throwString = "Thrown.";
         this.tieString = "";
         this.turnString = "";
         this.unlockString = "It doesn't seem to work.";
@@ -314,7 +314,22 @@ class GameObject {
             output(this.takeString);
     }
     talk() { output(this.talkString); }   
-    throwObject() { output(this.throwString); }
+    throwObject()
+    {
+        if (!this.isItem())
+        {
+            output("You'd have a hard time picking that up, much less throwing it.");
+            return;
+        }
+
+        switch (this.name)
+        {
+            default:
+            {
+                
+            } break;
+        }
+    }
     tie() { output("You can't tie the " + state.indirectObject.name + " to that."); }
     touch() { output(this.touchString + this.randPhrase()); }
     turn() { output(this.turnString); }
