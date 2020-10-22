@@ -848,6 +848,14 @@ class Item extends GameObject {
                 output("Tossin' that egg around! Dangerous!");
             } break;
 
+            case "elvish sword":
+            case "nasty knife":
+            case "rusty knife":
+            case "stiletto":
+            {
+
+            } break;
+
             default:
             {
                 output("Throwin' it up and down! Nasty!");
