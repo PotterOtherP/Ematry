@@ -494,11 +494,11 @@ actions.set("turn", {action: Action.TURN, type: ActionType.INDIRECT});
 actions.set("unlock", {action: Action.UNLOCK, type: ActionType.INDIRECT});
 actions.set("lock", {action: Action.LOCK, type: ActionType.INDIRECT});
 actions.set("strike", {action: Action.STRIKE, type: ActionType.INDIRECT});
+actions.set("throw", {action: Action.THROW, type: ActionType.INDIRECT});
 
 actions.set("give", {action: Action.GIVE, type: ActionType.INDIRECT_INVERSE});
 actions.set("place", {action: Action.PUT, type: ActionType.INDIRECT_INVERSE});
 actions.set("put", {action: Action.PUT, type: ActionType.INDIRECT_INVERSE});
-actions.set("throw", {action: Action.THROW, type: ActionType.INDIRECT_INVERSE});
 actions.set("tie", {action: Action.TIE, type: ActionType.INDIRECT_INVERSE});
 
 const prepositions = new Map();

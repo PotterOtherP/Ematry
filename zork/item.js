@@ -813,6 +813,49 @@ class Item extends GameObject {
         output("Taken.");
     }
 
+
+    throwObject()
+    {
+        output("Throwing that item around!");
+
+        switch(state.indirectObject.name)
+        {
+            case "river water":
+            {
+                output("Throwin' it at the river!");
+            } break;
+
+            case "reservoir water":
+            {
+                output("Throwin' it at the reservoir!");
+            } break;
+
+            case "chasm":
+            {
+                output("Throwin' it at the chasm!");
+            } break;
+
+            default:
+            {
+                output("Throwin' it at nothin' in particular!");
+            } break;
+        }
+
+        switch(this.name)
+        {
+            case "jewel-encrusted egg":
+            {
+                output("Tossin' that egg around! Dangerous!");
+            } break;
+
+            default:
+            {
+                output("Throwin' it up and down! Nasty!");
+            } break;
+        }
+
+    }
+
     untie()
     {
         switch (this.name)

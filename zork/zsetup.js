@@ -1396,7 +1396,6 @@ carpet.lookUnderString = ObjectStrings.CARPET_LOOK_UNDER;
 
 let chasmObj = new Feature("chasm", Location.CHASM);
 chasmObj.altLocations.add(Location.EAST_OF_CHASM);
-chasmObj.altNames.add("chasm");
 
 let coalMachine = new Container("machine", Location.MACHINE_ROOM);
 coalMachine.inventoryID = Location.INSIDE_COAL_MACHINE;
