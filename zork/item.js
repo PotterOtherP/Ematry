@@ -941,7 +941,9 @@ class Item extends GameObject {
 
                             case "cyclops":
                             {
-
+                                output("The cyclops graps your " + this.name + ", tastes it, and throws it "
+                                    + "to the ground in disgust.");
+                                this.location = state.playerLocation;
                             } break;
 
                             case "vampire bat":
