@@ -1008,7 +1008,7 @@ class Item extends GameObject {
 
                                     default:
                                     {
-                                        "lands unceremoniously on the ground.";
+                                        output("lands unceremoniously on the ground.");
                                         this.location = state.playerLocation;
                                     } break;
                                 }
