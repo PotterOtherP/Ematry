@@ -1147,7 +1147,7 @@ function validateAction()
                         output("You're not carrying the " + dirObj.name + ".");
                         exitInput();
                         return false;
-                    } break;
+                    } // break;
                 }
             }
 
@@ -1158,9 +1158,21 @@ function validateAction()
         {
             if (indObj.isItem() && indObj.location !== Location.PLAYER_INVENTORY)
             {
-                output("You're not carrying the " + indObj.name + ".");
-                exitInput();
-                return false;
+                switch (act)
+                {
+                    case "THROW":
+                    {
+
+                    } break;
+
+                    default:
+                    {
+                        output("You're not carrying the " + indObj.name + ".");
+                        exitInput();
+                        return false;
+                    } // break;
+                }
+                
             }
         } break;
 

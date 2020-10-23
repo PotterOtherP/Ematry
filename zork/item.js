@@ -860,6 +860,7 @@ class Item extends GameObject {
             } break;
 
             case "reservoir water":
+            case "stream water":
             {
                 switch (this.name)
                 {
@@ -910,6 +911,12 @@ class Item extends GameObject {
             {
                 switch(this.name)
                 {
+                    case "gold coffin":
+                    {
+                        output("You heave the coffin as far as you can manage, which is not very far.");
+                        this.location = state.playerLocation;
+                    } break;
+
                     case "jewel-encrusted egg":
                     {
                         output("Your rather indelicate handling of the egg has caused it some damage, "
@@ -917,6 +924,7 @@ class Item extends GameObject {
                         breakEgg();
                     } break;
 
+                    case "bloody axe":
                     case "elvish sword":
                     case "nasty knife":
                     case "rusty knife":
@@ -927,7 +935,7 @@ class Item extends GameObject {
                             case "troll":
                             {
                                 output("The troll, who is remarkable coordinated, catches the " + this.name
-                                    + "and eats it hungrily. Poor troll, he dies from an internal hemmorhage "
+                                    + " and eats it hungrily. Poor troll, he dies from an internal hemmorhage "
                                     + "and his carcass disappears in a sinister black fog.");
                                 this.location = state.playerLocation;
                                 troll.alive = false;
@@ -936,6 +944,11 @@ class Item extends GameObject {
 
                             case "thief":
                             {
+                                output("You missed. The thief makes no attempt to take the " + this.name
+                                    + ", though it would be a fine addition to the collection in his bag. "
+                                    + "He does seem angered by your attempt.");
+                                thief.thiefAggro = true;
+                                this.location = state.playerLocation;
 
                             } break;
 
@@ -948,7 +961,8 @@ class Item extends GameObject {
 
                             case "vampire bat":
                             {
-
+                                output("The bat ducks as the " + this.name + " flies by and crashes to the ground.");
+                                this.location = state.playerLocation;
                             } break;
 
                             default:
@@ -961,8 +975,86 @@ class Item extends GameObject {
 
                     default:
                     {
-                        output("Thrown.");
-                        this.location = state.playerLocation;
+                        if (state.indirectObject.location === Location.PLAYER_INVENTORY)
+                        {
+                            output("You aren't an accomplished enough juggler.");
+                            break;
+                        }
+
+                        switch (state.indirectObject.name)
+                        {
+                            case "air":
+                            {
+                                output("The " + this.name + " arcs through the air, and... ");
+
+                                switch (state.playerLocation)
+                                {
+                                    case "FRIGID_RIVER_1":
+                                    case "FRIGID_RIVER_2":
+                                    case "FRIGID_RIVER_3":
+                                    case "FRIGID_RIVER_4":
+                                    case "FRIGID_RIVER_5":
+                                    {
+                                        output("disappears under the flowing water.");
+                                        this.location = Location.NULL_LOCATION;
+                                    } break;
+
+                                    case "RESERVOIR":
+                                    case "STREAM":
+                                    {
+                                        output("slips under the water's surface.");
+                                        this.location = Location.RESERVOIR_EMPTY;
+                                    } break;
+
+                                    default:
+                                    {
+                                        "lands unceremoniously on the ground.";
+                                        this.location = state.playerLocation;
+                                    } break;
+                                }
+                            } break;
+
+                            case "magic boat":
+                            {
+                                output("Thrown.");
+                                this.location = Location.INSIDE_BOAT;
+                            } break;
+
+                            case "troll":
+                            {
+                                output("The troll, who is remarkably coordinated, catches the " + this.name
+                                    + " and not having the most discriminating taste, gleefully eats it.");
+                                this.location = Location.NULL_LOCATION;
+                            } break;
+
+                            case "thief":
+                            {
+                                output("The thief deftly snatches your " + this.name
+                                    + "out of the air and calmly places it in his bag.");
+                                this.location = Location.THIEF_INVENTORY;
+
+                            } break;
+
+                            case "cyclops":
+                            {
+                                output("The cyclops graps your " + this.name + ", tastes it, and throws it "
+                                    + "to the ground in disgust.");
+                                this.location = state.playerLocation;
+                            } break;
+
+                            case "vampire bat":
+                            {
+                                output("The bat ducks as the " + this.name + " flies by and crashes to the ground.");
+                                this.location = state.playerLocation;
+                            } break;
+
+                            default:
+                            {
+                                output("Thrown.");
+                                this.location = state.playerLocation;
+                            } break;
+                        }
+
                     } break;
                 }
 
