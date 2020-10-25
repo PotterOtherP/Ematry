@@ -190,10 +190,10 @@ class GameObject {
 
                     case "brown sack":
                     {
-                        if (!(inventory.length === 0))
+                        if (sack.inventory.length !== 0)
                         {
                             output("The sack is cut open and its contents spill onto the floor.");
-                            for (let g in this.inventory)
+                            for (let g of sack.inventory)
                                 g.location = state.playerLocation;
                         }
 
@@ -202,7 +202,7 @@ class GameObject {
                             output("The sack has been cut open and now rendered useless.");
                         }
 
-                        this.location = Location.NULL_LOCATION;
+                        sack.location = Location.NULL_LOCATION;
 
                     } break;
 

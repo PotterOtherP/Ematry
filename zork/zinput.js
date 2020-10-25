@@ -975,11 +975,12 @@ function removeSomeExtraWords()
 
 function removeUnwantedMultiples()
 {
-    let names = [ "altar", "attic table", "basket", "blue button", "boarded window", "broken mirror",
+    let names = [ "air", "altar", "attic table", "basket", "blue button", "boarded window", "broken mirror",
     "brown button", "current", "door", 
-    "engravings", "flood", "flow", "forest", "gas", "glow", "grating", "green bubble", "kitchen table", 
+    "engravings", "flood", "floor", "flow", "forest", "gas", "glow", "grating", "ground",
+    "green bubble", "kitchen table", 
     "kitchen window", "machine", "mirror", "mountains", "pedestal", "quantity of water", "rainbow", "red button", 
-    "reservoir water", "river water", "sand", "song bird", "spirits", "stream water", "trap door",
+    "reservoir water", "river water", "sand", "sky", "song bird", "spirits", "stream water", "trap door",
     "white house", "wooden boards", "wooden door", "wooden railing", "yellow button", "you"];
 
     for (let name of names)
