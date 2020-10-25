@@ -719,8 +719,10 @@ function fillCurrentObjectList()
         case "FRIGID_RIVER_3":
         case "FRIGID_RIVER_4":
         case "FRIGID_RIVER_5":
+        case "ON_THE_RAINBOW":
         case "RESERVOIR":
         case "STREAM":
+        case "UP_TREE":
         {
             currentObjects.delete("ground");
             currentObjects.delete("floor");
@@ -1168,6 +1170,27 @@ function validateAction()
                     default:
                     {
                         output("You're not carrying the " + indObj.name + ".");
+                        exitInput();
+                        return false;
+                    } // break;
+                }
+                
+            }
+
+            if (dirObj.isItem() && dirObj.location !== Location.PLAYER_INVENTORY)
+            {
+                switch (act)
+                {
+                    case "BREAK":
+                    case "CUT":
+                    case "INFLATE":
+                    {
+
+                    } break;
+
+                    default:
+                    {
+                        output("You're not carrying the " + dirObj.name + ".");
                         exitInput();
                         return false;
                     } // break;

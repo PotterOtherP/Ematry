@@ -65,6 +65,108 @@ class Item extends GameObject {
         }
     }
 
+    breakObject()
+    {
+        switch (this.name)
+        {
+            case "golden clockwork canary":
+            {
+                output("You briefly consider breaking the canary, but then remember "
+                    + "all the trouble you went through to acquire it, and change your mind.");
+            } break;
+
+            case "glass bottle":
+            {
+                if (state.indirectObject.name === "elvish sword")
+                {
+                    output("A brilliant maneuver destroys the bottle.");
+
+                    if (state.bottleFilled)
+                        output("The water spills to the floor and evaporates.");
+
+                    this.location = Location.NULL_LOCATION;
+                }
+
+                else
+                {
+                    super.breakObject();
+                }
+            } break;
+
+            case "jewel-encrusted egg":
+            {
+                switch (state.indirectObject.name)
+                {
+                    case "altar":
+                    case "bloody axe":
+                    case "brass bell":
+                    case "brass lantern":
+                    case "broken timber":
+                    case "crystal skull":
+                    case "crystal trident":
+                    case "elvish sword":
+                    case "glass bottle":
+                    case "gold coffin":
+                    case "ground":
+                    case "jade figurine":
+                    case "nasty knife":
+                    case "pedestal":
+                    case "platinum bar":
+                    case "rusty knife":
+                    case "sceptre":
+                    case "screwdriver":
+                    case "shovel":
+                    case "stiletto":
+                    case "trunk of jewels":
+                    case "useless lantern":
+                    case "white house":
+                    case "wrench":
+                    {
+                        output("Your rather indelicate handling of the egg has caused it some damage, "
+                                    + "although you have succeeded in opening it.");
+                        breakEgg();
+
+                    } break;
+
+                    default:
+                    {
+                        super.breakObject();
+                    } break;
+                }
+            } break;
+
+            case "painting":
+            {
+                switch (state.indirectObject.name)
+                {
+                    case "elvish sword":
+                    case "bloody axe":
+                    case "nasty knife":
+                    case "rusty knife":
+                    case "stiletto":
+                    case "sceptre":
+                    {
+                        output("Congratulations! Unlike the other vandals, who merely stole the artist's masterpieces, "
+                            + "you have destroyed one.");
+                        painting.location = Location.NULL_LOCATION;
+                        ruinedPainting.location = state.playerLocation;
+                    } break;
+
+                    default:
+                    {
+                        super.breakObject();
+                    }
+                }
+
+            } break;
+
+            default:
+            {
+                super.breakObject();
+            } break;
+        }
+    }
+
     close()
     {
         if (this.name ==="magic boat")
@@ -917,6 +1019,17 @@ class Item extends GameObject {
                         this.location = state.playerLocation;
                     } break;
 
+                    case "glass bottle":
+                    {
+                        output("The bottle hits the far wall and shatters.");
+                        if (state.bottleFilled)
+                        {
+                            output("The water splashes on the walls and evaporates immediately.");
+                        }
+
+                        this.location = Location.NULL_LOCATION;
+                    } break;
+
                     case "jewel-encrusted egg":
                     {
                         output("Your rather indelicate handling of the egg has caused it some damage, "
@@ -985,7 +1098,7 @@ class Item extends GameObject {
                         {
                             case "air":
                             {
-                                output("The " + this.name + " arcs through the air, and... ");
+                                let airString = "The " + this.name + " arcs through the air, and ";
 
                                 switch (state.playerLocation)
                                 {
@@ -995,23 +1108,25 @@ class Item extends GameObject {
                                     case "FRIGID_RIVER_4":
                                     case "FRIGID_RIVER_5":
                                     {
-                                        output("disappears under the flowing water.");
+                                        airString += "disappears under the flowing water.";
                                         this.location = Location.NULL_LOCATION;
                                     } break;
 
                                     case "RESERVOIR":
                                     case "STREAM":
                                     {
-                                        output("slips under the water's surface.");
+                                        airString += "slips under the water's surface.";
                                         this.location = Location.RESERVOIR_EMPTY;
                                     } break;
 
                                     default:
                                     {
-                                        output("lands unceremoniously on the ground.");
+                                        airString += "lands unceremoniously on the ground.";
                                         this.location = state.playerLocation;
                                     } break;
+
                                 }
+                                output(airString);
                             } break;
 
                             case "magic boat":

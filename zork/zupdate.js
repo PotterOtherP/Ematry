@@ -1189,6 +1189,10 @@ function updateEvents()
     }
 
     // ROPE TIED TO RAIL
+
+    if (rope.location === Location.NULL_LOCATION)
+        state.ropeRailTied = false;
+
     if (state.ropeRailTied)
     {
         rope.location = Location.ON_RAILING;
@@ -1427,9 +1431,9 @@ function boatCheck()
 
 function breakEgg()
 {
+    brokenEgg.location = egg.location;
     egg.location = Location.NULL_LOCATION;
     brokenCanary.location = Location.INSIDE_BROKEN_EGG;
-    brokenEgg.location = state.playerLocation;
     brokenEgg.itemOpen = true;
 
     output(ObjectStrings.INIT_BROKEN_CANARY);

@@ -140,7 +140,7 @@ class GameObject {
 
         else
         {
-            output("Trying to destroy " + this.articleName + " with "
+            output("Trying to destroy the " + this.name + " with "
             + state.indirectObject.articleName + " is futile.");
         }
     }
@@ -208,7 +208,19 @@ class GameObject {
 
                     case "magic boat":
                     {
+                        if (state.playerInBoat)
+                        {
+                            output("Not a bright idea, since you're in it.");
+                        }
 
+                        else
+                        {
+                            output("The boat deflates to the sound of hissing, sputtering, and cursing.");
+                            puncturedBoat.location = inflatedBoat.location;
+                            inflatedBoat.location = Location.NULL_LOCATION;
+                            deflatedBoat.location = Location.NULL_LOCATION;
+
+                        }
                     } break;
 
                     case "painting":

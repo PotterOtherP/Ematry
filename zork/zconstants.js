@@ -480,6 +480,7 @@ actions.set("kill", {action: Action.ATTACK, type: ActionType.INDIRECT});
 actions.set("hit", {action: Action.ATTACK, type: ActionType.INDIRECT});
 actions.set("fight", {action: Action.ATTACK, type: ActionType.INDIRECT});
 actions.set("break", {action: Action.BREAK, type: ActionType.INDIRECT});
+actions.set("destroy", {action: Action.BREAK, type: ActionType.INDIRECT});
 actions.set("burn", {action: Action.BURN, type: ActionType.INDIRECT});
 actions.set("cut", {action: Action.CUT, type: ActionType.INDIRECT});
 actions.set("dig", {action: Action.DIG, type: ActionType.INDIRECT});
