@@ -205,22 +205,53 @@ class Item extends GameObject {
             case "brown sack":
             case "ZORK owner's manual":
             {
+                if (this.location === Location.PLAYER_INVENTORY)
+                {
+                    output("The " + this.name + " catches fire. Unfortunately, you were holding it at the time.");
+                    playerDies();
+                }
+
+                else
+                {
+                    output("The " + this.name + " catches fire and is consumed.");
+                }
+                
+                this.location = Location.NULL_LOCATION;
 
             } break;
 
             case "black book":
             {
-
+                output("A booming void says \"Wrong, cretin!\" and you notice that you have been turned "
+                    + "into a pile of dust. How, I can't imagine.");
+                this.location = Location.ON_ALTAR;
+                playerDies();
             } break;
 
             case "small pile of coal":
             {
-
+                output("The small pile of coal catches fire and is consumed, dramatically "
+                    + "and unnecessarily increasing your carbon footprint. Well done.");
+                this.location = Location.NULL_LOCATION;
             } break;
 
             case "clove of garlic":
             {
+                output("A pleasant aroma briefly fills the air before the garlic catches fire and is consumed.");
+                this.location = Location.NULL_LOCATION;
+            } break;
 
+            case "pair of candles":
+            {
+                if (candles.activated)
+                {
+                    output("You realize, just in time, that the candles are already lit.");
+                }
+                else
+                {
+                    output("The heat from the torch is so intense that the candles are vaporized.");
+                    this.location = Location.NULL_LOCATION;
+                }
             } break;
 
 
@@ -450,6 +481,24 @@ class Item extends GameObject {
                 else
                 {
                     output("It is already off.");
+                }
+            } break;
+
+            case "pair of candles":
+            {
+                if (this.activated)
+                {
+                    this.activated = false;
+                    output("The candles have been put out.");
+                    this.examineString = "The candles are unlit.");
+                    darknessCheck();
+                    if (state.playerInDarkness)
+                        output("It is now pitch black.");
+                }
+
+                else
+                {
+                    output("The candles are unlit.");
                 }
             } break;
 
