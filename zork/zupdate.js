@@ -249,6 +249,7 @@ function updateStandard()
         case "BOARD": { state.directObject.board(); } break;
         case "BREAK": { state.directObject.breakObject(); } break;
         case "BRUSH": { state.directObject.brush(); } break;
+        case "BURN": { state.directObject.burn(); } break;
         case "CLIMB": {state.directObject.climb(); } break;
         case "CLOSE": {state.directObject.close(); } break;
         case "COUNT": { state.directObject.count(); } break;

@@ -1540,6 +1540,7 @@ mirror.breakString = "You have broken the mirror. I hope you have a seven years'
 
 let mountains = new Feature("mountains", Location.FOREST_NORTHEAST);
 mountains.altNames.add("mountain");
+mountains.articleName = "a mountain";
 mountains.climbString = "Don't you believe me? The mountains are impassable!";
 
 let pedestal = new Surface("pedestal", Location.TORCH_ROOM);

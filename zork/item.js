@@ -167,6 +167,70 @@ class Item extends GameObject {
         }
     }
 
+
+    burn()
+    {
+        switch (state.indirectObject.name)
+        {
+            case "torch":
+            case "pair of candles":
+            case "matchbook":
+            {
+                if (!state.indirectObject.activated)
+                {
+                    super.burn();
+                    return;
+                }
+            } break;
+
+            default:
+            {
+                super.burn();
+                return;
+            } // break;
+        }
+
+        switch (this.name)
+        {
+            case "leaflet":
+            case "painting":
+            case "ruined painting":
+            case "ancient map":
+            case "tan label":
+            case "guidebook":
+            case "bird's nest":
+            case "pile of leaves":
+            case "lunch":
+            case "matchbook":
+            case "brown sack":
+            case "ZORK owner's manual":
+            {
+
+            } break;
+
+            case "black book":
+            {
+
+            } break;
+
+            case "small pile of coal":
+            {
+
+            } break;
+
+            case "clove of garlic":
+            {
+
+            } break;
+
+
+            default:
+            {
+                super.burn();
+            } break;
+        }
+    }
+
     close()
     {
         if (this.name ==="magic boat")

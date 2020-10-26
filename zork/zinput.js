@@ -1183,6 +1183,7 @@ function validateAction()
                 switch (act)
                 {
                     case "BREAK":
+                    case "BURN":
                     case "CUT":
                     case "INFLATE":
                     {

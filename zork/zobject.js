@@ -130,7 +130,47 @@ class GameObject {
     blow() { output(this.blowString); }
     board() { output(this.boardString); }
     brush() { output(this.brushString); }
-    burn() { output(this.burnString); }
+    burn()
+    {
+        if (state.indirectObject.name === "dummy_object")
+        {
+            output("You should say what you want to use.");
+        }
+
+        else
+        {
+            switch (state.indirectObject.name)
+            {
+                case "torch":
+                {
+                    output("You can't burn " + this.articleName + ".");
+                } break;
+
+                case "matchbook":
+                {
+                    if (!matchbook.activated)
+                        output("With an unlit match?!??");
+                    else
+                        output("You can't burn " + this.articleName + ".");
+
+                } break;
+
+                case "pair of candles":
+                {
+                    if (!candles.activated)
+                        output("With an unlit pair of candles?!??");
+                    else
+                        output("You can't burn " + this.articleName + ".");
+                } break;
+
+
+                default:
+                {
+                    output("With " + state.indirectObject.articleName + "??!?");
+                } break;
+            }
+        }
+    }
     breakObject()
     {
         if (state.indirectObject.isWeapon)
