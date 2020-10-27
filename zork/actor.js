@@ -1443,7 +1443,7 @@ class Actor extends GameObject {
 
         if (this.location === state.playerLocation)
         {
-            output(this.presenceString);
+            outputFirst(this.presenceString);
 
             let misses = [ ObjectStrings.TROLL_FIGHT_MISS_1, ObjectStrings.TROLL_FIGHT_MISS_2, ObjectStrings.TROLL_FIGHT_MISS_3,
                 ObjectStrings.TROLL_FIGHT_MISS_4, ObjectStrings.TROLL_FIGHT_MISS_5 ];

@@ -16,6 +16,24 @@ class Item extends GameObject {
         this.weight = 0;
     }
 
+
+    blow()
+    {
+        switch (this.name)
+        {
+            case "matchbook":
+            case "pair of candles":
+            {
+                this.extinguish();
+            } break;
+
+            default:
+            {
+                super.blow();
+            } break;
+        }
+    }
+
     board()
     {
         switch (this.name)
@@ -484,13 +502,19 @@ class Item extends GameObject {
                 }
             } break;
 
+            case "matchbook":
+            {
+                matchbook.activated = false;
+                output("The match is out.");
+            } break;
+
             case "pair of candles":
             {
                 if (this.activated)
                 {
                     this.activated = false;
                     output("The candles have been put out.");
-                    this.examineString = "The candles are unlit.");
+                    this.examineString = "The candles are unlit.";
                     darknessCheck();
                     if (state.playerInDarkness)
                         output("It is now pitch black.");

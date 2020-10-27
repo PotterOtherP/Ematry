@@ -207,6 +207,9 @@ function updateGame()
     updateEvents();
     updateScore();
 
+    if (usingLocalStorage)
+        saveToLocalStorage("reloadSave");
+
 }
 
 function outputMobile()

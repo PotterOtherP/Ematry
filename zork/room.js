@@ -293,10 +293,10 @@ class Room {
                 outputDescription(g.presenceString);
             }
 
-            // if (g.isActor() && g.presenceString !== "")
-            // {
-            //     output(g.presenceString);
-            // }
+            if (g.isActor() && g.presenceString !== "" && state.playerAction === Action.LOOK)
+            {
+                outputDescription(g.presenceString);
+            }
 
             if (g.isItem())
             {

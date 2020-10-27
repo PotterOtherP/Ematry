@@ -1603,6 +1603,13 @@ streamWater.altNames.add("stream");
 streamWater.altNames.add("water");
 streamWater.altLocations.add(Location.STREAM_VIEW);
 
+let templeInscription = new Feature("inscription", Location.TEMPLE);
+templeInscription.altNames.add("prayer");
+templeInscription.altNames.add("east wall");
+templeInscription.altNames.add("wall");
+templeInscription.readString = GameStrings.TEMPLE_PRAYER;
+templeInscription.examineString = GameStrings.TEMPLE_PRAYER;
+
 let toolChests = new Feature("tool chests", Location.MAINTENANCE_ROOM);
 toolChests.initialPresenceString = ObjectStrings.INIT_TOOL_CHESTS;
 toolChests.takeString = "The chests are so rusty and corroded that they crumble when you touch them.";
@@ -1822,6 +1829,7 @@ objectList.set(shaftBasket.name, shaftBasket);
 objectList.set(shaftChain.name, shaftChain);
 objectList.set(skeleton.name, skeleton);
 objectList.set(streamWater.name, streamWater);
+objectList.set(templeInscription.name, templeInscription);
 objectList.set(trapDoor.name, trapDoor);
 objectList.set(trophyCase.name, trophyCase);
 objectList.set(toolChests.name, toolChests);

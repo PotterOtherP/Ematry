@@ -68,7 +68,7 @@ function getPlayerInput()
 {
     input = "";
 
-    document.getElementById("gameArea").innerText = "";
+    document.getElementById("gameArea").innerHTML = "";
     console.clear();
 
     state.resetInput();

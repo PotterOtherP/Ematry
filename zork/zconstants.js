@@ -403,6 +403,7 @@ actions.set("wait", {action: Action.WAIT, type: ActionType.REFLEXIVE});
 
 actions.set("answer", {action: Action.ANSWER, type: ActionType.DIRECT});
 actions.set("blow", {action: Action.BLOW, type: ActionType.DIRECT});
+actions.set("blow out", {action: Action.BLOW, type: ActionType.DIRECT});
 actions.set("board", {action: Action.BOARD, type: ActionType.DIRECT});
 actions.set("get on", {action: Action.BOARD, type: ActionType.DIRECT});
 actions.set("get in", {action: Action.BOARD, type: ActionType.DIRECT});
