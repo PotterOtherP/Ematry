@@ -1,0 +1,53 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <title>Ematry</title>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <link rel="stylesheet" href="styles/w3.css">
+    <link rel="stylesheet" href="styles/global.css">
+    <script type="text/javascript" src="scripts/util.js"></script>
+    <script type="text/javascript" src="scripts/maze/MazeNode.js"></script>
+
+</head>
+
+<body class="w3-light-gray">
+
+    <div class="w3-bar w3-blue-gray" style="position: fixed; top: 0; height: 8%;">
+        <a href="index.html" class="w3-bar-item w3-button" style="text-decoration: none;"><h2>Home</h2></a>
+        <button class="w3-bar-item w3-blue-gray w3-right w3-xxlarge" id="mobile-menu-button" onclick="mobile_menu_open()">☰</button>
+    </div>
+
+    <div class="w3-sidebar w3-mobile w3-blue-gray" id="mobile-menu">
+        
+        <div class="link"><button onclick="mobile_menu_close()" class="w3-button w3-bar-item w3-large w3-right w3-blue-gray">&times;</button></div>
+        <div class="link w3-xlarge w3-hover-gray"><a href="index.html" style="text-decoration: none;">Home</a></div>
+        <div class="link w3-xlarge w3-hover-gray"><a href="zork.html" style="text-decoration: none;">Zork</a></div>
+        <div class="link w3-xlarge w3-hover-gray"><a href="blog.html" style="text-decoration: none;">Blog</a></div>
+    </div> 
+
+
+
+    <div class="w3-container w3-sidebar w3-gray" style="width: 15%; height: 92%; bottom: 0;" id="web-menu">
+        <div class="link"><a href="zork.html">Zork: A Re-Creation</a></div>
+        <div class="link"><a href="blog.html">Blog</a></div>
+    </div>
+
+    <div class="w3-container w3-leftbar w3-topbar w3-border-black" id="gameArena">
+        <p>MAZE</p>
+
+
+    </div>
+
+    <script type="text/javascript">
+
+    let node = new MazeNode(3,4);
+    node.addNewChild(5,6);
+    node.display();
+
+    </script>
+
+
+</body>
+</html>

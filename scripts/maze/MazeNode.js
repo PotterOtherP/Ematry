@@ -9,7 +9,7 @@ class MazeNode {
         this.exit = false;
 
         this.parents = [];
-        this.childen = [];
+        this.children = [];
 
         this.deadEnd = false;
     }
@@ -19,6 +19,16 @@ class MazeNode {
         const childNode = new MazeNode(x, y);
         childNode.parents.push(this);
         this.children.push(childNode);
+    }
+
+    display()
+    {
+        console.log("(" + this.x + ", " + this.y + ")");
+
+        for (let child of this.children)
+        {
+            console.log("(" + child.x + ", " + child.y + ")");
+        }
     }
     
 }
