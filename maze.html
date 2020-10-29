@@ -7,8 +7,8 @@
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <link rel="stylesheet" href="styles/w3.css">
     <link rel="stylesheet" href="styles/global.css">
+    <link rel="stylesheet" href="styles/maze.css">
     <script type="text/javascript" src="scripts/util.js"></script>
-    <script type="text/javascript" src="scripts/maze/MazeNode.js"></script>
 
 </head>
 
@@ -35,16 +35,19 @@
     </div>
 
     <div class="w3-container w3-leftbar w3-topbar w3-border-black" id="gameArena">
-        <p>MAZE</p>
+        <canvas id="mazeCanvas"></canvas>
 
 
     </div>
 
+    <script type="text/javascript" src="scripts/maze/MazeNode.js"></script>
     <script type="text/javascript">
+    let context = mazeCanvas.getContext("2d");
 
-    let node = new MazeNode(3,4);
-    node.addNewChild(5,6);
-    node.display();
+    let node = new MazeNode(20,20);
+    node.addNewChild(50,60);
+    node.display(context);
+
 
     </script>
 
