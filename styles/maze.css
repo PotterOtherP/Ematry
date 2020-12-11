@@ -1,7 +1,21 @@
-#mazeCanvas {
-    
-    width: 640px;
-    height: 480px;
-    margin: 50px;
-    background: gray;
+svg {
+    display: block;
+    margin: 5%;
+    height: 80vh;
+}
+
+#svg-container {
+
+    margin-left: 15%;
+    height: 92%;
+    width: 85%;
+    position: fixed;
+    bottom: 0; 
+    overflow: auto;
+}
+
+#blah {
+
+    display: flex;
+    flex-direction: row;
 }
