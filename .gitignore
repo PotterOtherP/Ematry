@@ -2,3 +2,7 @@
 *.gif
 *.doc
 *.docx
+*.svg
+*.bmp
+pre_maze/
+*.log

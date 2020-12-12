@@ -2,20 +2,39 @@ svg {
     display: block;
     margin: 5%;
     height: 80vh;
+    min-width: 400px;
+    min-height: 300px;
 }
 
-#svg-container {
-
-    margin-left: 15%;
-    height: 92%;
-    width: 85%;
-    position: fixed;
-    bottom: 0; 
-    overflow: auto;
-}
-
-#blah {
+#maze-info {
 
     display: flex;
-    flex-direction: row;
+    flex-direction: column;
+    width: 30%;
+    height: 80vh;
+    margin: 5%;
+}
+
+button {
+    margin-bottom: 10px;
+}
+
+@media screen and (max-width: 1100px) {
+
+    #gameArena {
+        flex-direction: column-reverse;
+        align-items: center;
+        justify-content: : flex-start;
+    }
+
+    #maze-info {
+        width: 100%;
+        height: auto;
+    }
+
+    svg {
+        width: 100%;
+        margin: 0;
+        height: 100vh;
+    }
 }
