@@ -9,6 +9,8 @@
     <link rel="stylesheet" href="styles/global.css">
     <link rel="stylesheet" href="styles/maze.css">
     <script type="text/javascript" src="scripts/util.js"></script>
+    <script type="text/javascript" src="scripts/maze/wallpath.js"></script>
+    <script type="text/javascript" src="scripts/maze/maze.js"></script>
 
 </head>
 
@@ -47,16 +49,16 @@
             <rect x="0" y="450" width="600" height="450" fill="#c2d2d2"/>
             <rect x="600" y="450" width="600" height="450" fill="#a2a2a2"/>
 
-            <image x="0" y="0" width="1200" height="900" xlink:href="pre_maze/maze_3.svg"/>
+            <image x="0" y="0" width="1200" height="900" xlink:href="pre_maze/maze_4.svg"/>
         </svg>
 
         <div id="maze-info">
-            <button class="w3-button w3-khaki w3-round-large">Generate</button>
-            <button class="w3-button w3-green w3-round-large">Solve</button>
-            <button class="w3-button w3-blue w3-round-large">Show Solution</button>
-            <button class="w3-button w3-red w3-round-large">Race</button>
-            <button class="w3-button w3-purple w3-round-large">Convert</button>
-            <button class="w3-button w3-black w3-round-large">Save Image</button>
+            <button class="w3-button w3-khaki w3-round-large" id="button_generate">Generate</button>
+            <button class="w3-button w3-green w3-round-large" id="button_solve" disabled="true">Solve</button>
+            <button class="w3-button w3-blue w3-round-large" id="button_solution" disabled="true">Show Solution</button>
+            <button class="w3-button w3-red w3-round-large" id="button_race" disabled="true">Race</button>
+            <button class="w3-button w3-purple w3-round-large" id="button_convert" disabled="true">Convert</button>
+            <button class="w3-button w3-black w3-round-large" id="button_save" disabled="true">Save Image</button>
             
         </div>
 
