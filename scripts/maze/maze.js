@@ -38,6 +38,70 @@ function generate()
 
     initMaze();
 
+    // Create the seed WallPaths... Around the entrance and exit
+    addPath(startPoint.x - 1, startPoint.y + 1, 2);
+    addPath(startPoint.x + 1, startPoint.y + 1, 2);
+    addPath(exitPoint.x - 1, exitPoint.y - 1, 1);
+    addPath(exitPoint.x + 1, exitPoint.y - 1, 1);
+    addTopWallPaths();
+    addBottomWallPaths();
+    addLeftWallPaths();
+    addRightWallPaths();
+    addRandomInteriorPaths(complexity);
+
+    // Grow main paths
+    for (let i = 0; i < MAX_ITERATIONS; ++i)
+    {
+        for (let path of paths)
+        {
+            let roll = getRandom(100) + 1;
+
+            if (path.active && pathIsClear(path.getCheckPoint(), path.direction))
+            {
+                if (roll <= 70)
+                {
+                    path.grow();
+                    path.checkActive();
+                }
+
+                else
+                    path.changeDirection();
+            }
+
+            else
+            {
+                path.changeDirection();
+            }
+
+            if (!path.active && roll <= BRANCH_PERCENT)
+            {
+                branches.push(path.branch());
+            }
+
+            // update the grid letters
+            for (let pt of path.points)
+            {
+                mazeGrid[pt.y][pt.x] = CH_WALL;
+            }
+        }
+
+        for (let branch of branches)
+        {
+            if (pathIsClear(branch.getBranchCheckPoint(), branch.direction))
+                paths.push(branch);
+        }
+
+        branches = [];
+    }
+
+    // Fill in little gaps
+    while_control = 0;
+    while (!isComplete())
+    {
+        ++while_control;
+        if (while_control > 1000)
+            break;
+    }
 
     document.getElementById("button_solve").removeAttribute("disabled");
     document.getElementById("button_solution").removeAttribute("disabled");
@@ -59,7 +123,172 @@ function addPath(x, y, d)
         paths.push(new WallPath(x, y, d));
         mazeGrid[y][x] = CH_WALL;
     }
-    
+
+}
+
+function addTopWallPaths()
+{
+    let pathY = wall_top + 1;
+    let xCoords = [];
+
+    if (startPoint.x >= columns / 2)
+        xCoords.push(getRandom(startPoint.x - 4) + 2);
+    else
+        xCoords.push(getRandom(columns - startPoint.x - 2) + startPoint.x + 1);
+
+    addPath(xCoords[0], pathY, 2);
+
+    for (let i = 1; i < complexity / 2; ++i)
+    {
+        let nextX = xCoords[0];
+        let condition = true;
+
+        // This is to make sure the next path is at least 2 grid units away from
+        // any other path and 3 units away from the maze entrance.
+        while (condition)
+        {
+            nextX = getRandom(columns - 4) + 2;
+            condition = false;
+
+            for (let j = 0; j < i; ++j)
+            {
+                if (Math.abs(nextX - xCoords[j]) < 2)
+                    condition = true;
+            }
+
+            if (Math.abs(nextX - startPoint.x) < 3)
+                condition = true;
+        }
+
+        xCoords.push(nextX);
+        addPath(nextX, pathY, 2);
+    }
+
+}
+
+function addBottomWallPaths()
+{
+
+    let pathY = wall_bottom - 1;
+    let xCoords = [];
+
+    if (exitPoint.x >= columns / 2)
+        xCoords.push(getRandom(exitPoint.x - 4) + 2);
+    else
+        xCoords.push(getRandom(columns - exitPoint.x - 2) + exitPoint.x + 1);
+
+    addPath(xCoords[0], pathY, 1);
+
+    for (let i = 1; i < complexity / 2; ++i)
+    {
+        let nextX = xCoords[0];
+        let condition = true;
+
+        // This is to make sure the next path is at least 2 grid units away from
+        // any other path and 3 units away from the maze exit.
+        while (condition)
+        {
+            nextX = getRandom(columns - 4) + 2;
+            condition = false;
+
+            for (let j = 0; j < i; ++j)
+            {
+                if (Math.abs(nextX - xCoords[j]) < 2)
+                    condition = true;
+            }
+
+            if (Math.abs(nextX - exitPoint.x) < 3)
+                condition = true;
+        }
+
+        xCoords.push(nextX);
+        addPath(nextX, pathY, 1);
+    }
+
+}
+
+function addLeftWallPaths()
+{
+    let pathX = wall_left + 1;
+    let yCoords = [];
+
+    yCoords.push(getRandom(rows - 4) + 2);
+    addPath(pathX, yCoords[0], 4);
+
+    for (let i = 1; i < complexity / 2; ++i)
+    {
+        let nextY = yCoords[0];
+        let condition = true;
+
+        while (condition)
+        {
+            nextY = getRandom(rows - 4) + 2;
+            condition = false;
+
+            for (let j = 0; j < i; ++j)
+            {
+                if (Math.abs(nextY - yCoords[j]) < 2)
+                    condition = true;
+            }
+        }
+
+        yCoords.push(nextY);
+        addPath(pathX, nextY, 4);
+    }
+
+}
+
+function addRightWallPaths()
+{
+    let pathX = wall_right - 1;
+    let yCoords = [];
+
+    yCoords.push(getRandom(rows - 4) + 2);
+    addPath(pathX, yCoords[0], 3);
+
+    for (let i = 1; i < complexity / 2; ++i)
+    {
+        let nextY = yCoords[0];
+        let condition = true;
+
+        while (condition)
+        {
+            nextY = getRandom(rows - 4) + 2;
+            condition = false;
+
+            for (let j = 0; j < i; ++j)
+            {
+                if (Math.abs(nextY - yCoords[j]) < 2)
+                    condition = true;
+            }
+        }
+
+        yCoords.push(nextY);
+        addPath(pathX, nextY, 3);
+    }
+
+}
+
+function addRandomInteriorPaths(num)
+{
+    for (let i = 0; i < num; ++i)
+    {
+        let randX = getRandom(columns - 4) + 2;
+        let randY = getRandom(rows - 4) + 2;
+        let randD = getRandom(4) + 1;
+        let condition = true;
+
+        for (let j = randY - 1; j <= randY + 1; ++j)
+            for (let k = randX - 1; k <= randX + 1; ++k)
+                if (mazeGrid[j][k] == CH_WALL)
+                    condition = false;
+
+        if (condition)
+        {
+            addPath(randX, randY, randD);
+            mazeGrid[randY][randX] = CH_WALL;
+        }
+    }
 }
 
 function getRandom(int)
@@ -69,6 +298,10 @@ function getRandom(int)
 
 function initMaze()
 {
+    mazeGrid = [];
+    paths = [];
+    branches = [];
+
     for (let i = 0; i < rows; ++i)
     {
         mazeGrid.push([]);
@@ -164,13 +397,16 @@ function pathIsClear(pt, dir)
     let checkX = Math.max(wall_left, pt.x);
     let checkY = Math.max(wall_top, pt.y);
 
-    checkX = Math.min(wall_right, pt.x);
-    checkY = Math.min(wall_bottom, pt.y);
+    checkX = Math.min(wall_right, checkX);
+    checkY = Math.min(wall_bottom, checkY);
 
+    // console.log("checkY = " + checkY);
+    // console.log("checkX = " + checkX);
+    // console.log("mazeGrid[checkY][checkX] = " + mazeGrid[checkY][checkX]);
     if (mazeGrid[checkY][checkX] == CH_WALL)
         return false;
 
-    switch (d)
+    switch (dir)
     {
         case 1:
         {

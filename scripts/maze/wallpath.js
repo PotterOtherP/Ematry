@@ -140,9 +140,9 @@ class WallPath {
     {
         let roll = getRandom(100) + 1;
 
-        if (this.points.length > 10 && roll < points.length * 2)
+        if (this.points.length > 10 && roll < this.points.length * 2)
             this.active = false;
-        
+
     }
 
     getBranchCheckPoint()
