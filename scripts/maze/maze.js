@@ -59,6 +59,7 @@ function addPath(x, y, d)
         paths.push(new WallPath(x, y, d));
         mazeGrid[y][x] = CH_WALL;
     }
+    
 }
 
 function getRandom(int)
@@ -125,7 +126,109 @@ function isComplete()
         }
     }
 
+    // Vertical set of 2 x 3 points
+    for (let i = 1; i < rows - 2; ++i)
+    {
+        for (let j = 1; j < columns - 2; ++j)
+        {
+            if (mazeGrid[i][j] == CH_SPACE &&
+                mazeGrid[i][j + 1] == CH_SPACE &&
+                mazeGrid[i - 1][j] == CH_SPACE &&
+                mazeGrid[i - 1][j + 1] == CH_SPACE &&
+                mazeGrid[i + 1][j] == CH_SPACE &&
+                mazeGrid[i + 1][j + 1] == CH_SPACE)
+            {
+                let roll = getRandom(2);
+
+                if (roll == 0 && mazeGrid[i - 1][j] == CH_WALL)
+                {
+                    addPath(j, i, 3);
+                }
+
+                else if (roll == 1 && mazeGrid[i + 2][j] == CH_WALL)
+                {
+                    addPath(j + 1, i, 4);
+                }
+
+                result = false;
+            }
+        }
+    }
+
     return result;
+
+}
+
+function pathIsClear(pt, dir)
+{
+    let checkX = Math.max(wall_left, pt.x);
+    let checkY = Math.max(wall_top, pt.y);
+
+    checkX = Math.min(wall_right, pt.x);
+    checkY = Math.min(wall_bottom, pt.y);
+
+    if (mazeGrid[checkY][checkX] == CH_WALL)
+        return false;
+
+    switch (d)
+    {
+        case 1:
+        {
+            if (mazeGrid[checkY][checkX + 1] == CH_WALL     ||
+                mazeGrid[checkY][checkX - 1] == CH_WALL     ||
+                mazeGrid[checkY + 1][checkX + 1] == CH_WALL ||
+                mazeGrid[checkY + 1][checkX] == CH_WALL     ||
+                mazeGrid[checkY + 1][checkX - 1] == CH_WALL)
+            {
+                return false;
+            }
+
+        } break;
+        
+        case 2:
+        {
+            if (mazeGrid[checkY][checkX + 1] == CH_WALL     ||
+                mazeGrid[checkY][checkX - 1] == CH_WALL     ||
+                mazeGrid[checkY - 1][checkX + 1] == CH_WALL ||
+                mazeGrid[checkY - 1][checkX] == CH_WALL     ||
+                mazeGrid[checkY - 1][checkX - 1] == CH_WALL)
+            {
+                return false;
+            }
+
+        } break;
+
+        case 3:
+        {
+            if (mazeGrid[checkY + 1][checkX] == CH_WALL     ||
+                mazeGrid[checkY - 1][checkX] == CH_WALL     ||
+                mazeGrid[checkY + 1][checkX + 1] == CH_WALL ||
+                mazeGrid[checkY][checkX + 1] == CH_WALL     ||
+                mazeGrid[checkY - 1][checkX + 1] == CH_WALL)
+            {   
+                return false;
+            }
+
+        } break;
+
+        case 4:
+        {
+            if (mazeGrid[checkY + 1][checkX] == CH_WALL     ||
+                mazeGrid[checkY - 1][checkX] == CH_WALL     ||
+                mazeGrid[checkY + 1][checkX - 1] == CH_WALL ||
+                mazeGrid[checkY][checkX - 1] == CH_WALL     ||
+                mazeGrid[checkY - 1][checkX - 1] == CH_WALL)
+            {   
+                return false;
+            }
+
+        } break;
+
+        default: {} break;
+    }
+        
+    return true;
+
 }
 
 function pointEquals(p1, p2)
@@ -145,6 +248,7 @@ function randomizeColors()
 
     wallColor = new ColorRGB(wallRed, wallGreen, wallBlue);
     spaceColor = new ColorRGB(spaceRed, spaceGreen, spaceBlue);
+
 }
 
 window.onload = function()
