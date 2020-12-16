@@ -9,7 +9,7 @@ const CH_WALL = 'X';
 const CH_SPACE = '-';
 const FILENAME_DEFAULT = "maze_default";
 
-let complexity = COMPLEXITY_DEFAULT;
+let complexity = 20;
 let mazeGrid = [];
 let paths = [];
 let branches = [];
@@ -28,6 +28,9 @@ let wallColor = null;
 let spaceColor = null;
 
 let filename = FILENAME_DEFAULT;
+let namespace = "http://www.w3.org/2000/svg";
+
+
 
 function generate()
 {
@@ -52,56 +55,21 @@ function generate()
     // Grow main paths
     for (let i = 0; i < MAX_ITERATIONS; ++i)
     {
-        for (let path of paths)
-        {
-            let roll = getRandom(100) + 1;
-
-            if (path.active && pathIsClear(path.getCheckPoint(), path.direction))
-            {
-                if (roll <= 70)
-                {
-                    path.grow();
-                    path.checkActive();
-                }
-
-                else
-                    path.changeDirection();
-            }
-
-            else
-            {
-                path.changeDirection();
-            }
-
-            if (!path.active && roll <= BRANCH_PERCENT)
-            {
-                branches.push(path.branch());
-            }
-
-            // update the grid letters
-            for (let pt of path.points)
-            {
-                mazeGrid[pt.y][pt.x] = CH_WALL;
-            }
-        }
-
-        for (let branch of branches)
-        {
-            if (pathIsClear(branch.getBranchCheckPoint(), branch.direction))
-                paths.push(branch);
-        }
-
-        branches = [];
+        growPaths();
     }
 
     // Fill in little gaps
     while_control = 0;
     while (!isComplete())
     {
+        growPaths();
         ++while_control;
         if (while_control > 1000)
             break;
     }
+
+    randomizeColors();
+    paintMaze();
 
     document.getElementById("button_solve").removeAttribute("disabled");
     document.getElementById("button_solution").removeAttribute("disabled");
@@ -289,11 +257,88 @@ function addRandomInteriorPaths(num)
             mazeGrid[randY][randX] = CH_WALL;
         }
     }
+
+}
+
+function drawHorizontal(x, y, length, thickness, color)
+{
+    let el = document.createElementNS(namespace, "rect");
+    let svg = document.getElementById("mazeSVG");
+
+    el.setAttribute("x", x);
+    el.setAttribute("y", y);
+    el.setAttribute("width", length);
+    el.setAttribute("height", thickness);
+    el.setAttribute("fill", color.getCode());
+    el.setAttribute("rx", 10);
+
+    svg.appendChild(el);
+
+}
+
+function drawVertical(x, y, length, thickness, color)
+{
+    let el = document.createElementNS(namespace, "rect");
+    let svg = document.getElementById("mazeSVG");
+
+    el.setAttribute("x", x);
+    el.setAttribute("y", y);
+    el.setAttribute("width", thickness);
+    el.setAttribute("height", length);
+    el.setAttribute("fill", color.getCode());
+    el.setAttribute("rx", 10);
+
+    svg.appendChild(el);
+
 }
 
 function getRandom(int)
 {
     return Math.floor(Math.random() * int);
+}
+
+function growPaths()
+{
+    for (let path of paths)
+    {
+        let roll = getRandom(100) + 1;
+
+        if (path.active && pathIsClear(path.getCheckPoint(), path.direction))
+        {
+            if (roll <= 70)
+            {
+                path.grow();
+                path.checkActive();
+            }
+
+            else
+                path.changeDirection();
+        }
+
+        else
+        {
+            path.changeDirection();
+        }
+
+        if (!path.active && roll <= BRANCH_PERCENT)
+        {
+            branches.push(path.branch());
+        }
+
+        // update the grid letters
+        for (let pt of path.points)
+        {
+            mazeGrid[pt.y][pt.x] = CH_WALL;
+        }
+    }
+
+    for (let branch of branches)
+    {
+        if (pathIsClear(branch.getBranchCheckPoint(), branch.direction))
+            paths.push(branch);
+    }
+
+    branches = [];
 }
 
 function initMaze()
@@ -390,6 +435,83 @@ function isComplete()
 
     return result;
 
+}
+
+function paintBackground(c)
+{
+    let el = document.createElementNS(namespace, "rect");
+    let svg = document.getElementById("mazeSVG");
+
+    el.setAttribute("x", 0);
+    el.setAttribute("y", 0);
+    el.setAttribute("width", SVG_WIDTH);
+    el.setAttribute("height", SVG_HEIGHT);
+    el.setAttribute("fill", c.getCode());
+
+    svg.appendChild(el);
+
+}
+
+function paintMaze()
+{
+    paintBackground(spaceColor);
+
+    let columnPixels = SVG_WIDTH / columns;
+    let rowPixels = SVG_HEIGHT / rows;
+
+    // Horizontal wall sections
+    for (let i = 0; i < rows; ++i)
+    {
+        let sectionLength = 0;
+        let sectionX = 0;
+        let sectionY = i * rowPixels;
+
+        for (let j = 0; j < columns; ++j)
+        {
+            if (mazeGrid[i][j] == CH_WALL)
+            {
+                if (sectionLength == 0)
+                    sectionX = j * columnPixels;
+
+                ++sectionLength;
+            }
+
+            if (mazeGrid[i][j] != CH_WALL || j == columns - 1)
+            {
+                if (sectionLength > 1)
+                    drawHorizontal(sectionX, sectionY, sectionLength * columnPixels, rowPixels, wallColor);
+
+                sectionLength = 0;
+            }
+        }
+    }
+
+    // Vertical wall sections
+    for (let i = 0; i < columns; ++i)
+    {
+        let sectionLength = 0;
+        let sectionX = i * columnPixels;
+        let sectionY = 0;
+
+        for (let j = 0; j < rows; ++j)
+        {
+            if (mazeGrid[j][i] == CH_WALL)
+            {
+                if (sectionLength == 0)
+                    sectionY = j * rowPixels;
+
+                ++sectionLength;
+            }
+
+            if (mazeGrid[j][i] != CH_WALL || j == rows - 1)
+            {
+                if (sectionLength > 1)
+                    drawVertical(sectionX, sectionY, sectionLength * rowPixels, columnPixels, wallColor);
+
+                sectionLength = 0;
+            }
+        }
+    }
 }
 
 function pathIsClear(pt, dir)
