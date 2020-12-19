@@ -24,7 +24,7 @@ let wall_bottom = rows - 1;
 let while_control = 0;
 
 let startPoint = {x: 0, y: 0};
-let endPoint = {x: 0, y: 0};
+let exitPoint = {x: 0, y: 0};
 
 let wallColor = null;
 let spaceColor = null;
@@ -147,34 +147,41 @@ function keyDown(event)
     let checkX = player.points[player.points.length - 1].x;
     let checkY = player.points[player.points.length - 1].y;
 
+    if (checkX == exitPoint.x && checkY == exitPoint.y)
+    {
+        console.log("Maze solved!");
+        window.removeEventListener("keydown", keyDown, true);
+        return;
+    }
+
     switch (event.keyCode)
     {
         case 37:
         {
             player.direction = 3;
             --checkX;
-            console.log("Movement left!");
+            // console.log("Movement left!");
         } break;
 
         case 38:
         {
             player.direction = 1;
             --checkY;
-            console.log("Movement up!");
+            // console.log("Movement up!");
         } break;
 
         case 39:
         {
             player.direction = 4;
             ++checkX;
-            console.log("Movement right!");
+            // console.log("Movement right!");
         } break;
 
         case 40:
         {
             player.direction = 2;
             ++checkY;
-            console.log("Movement down!");
+            // console.log("Movement down!");
         } break;
 
         default: {} break;
@@ -187,10 +194,11 @@ function keyDown(event)
         player.points.pop();
     }
 
+
+
     else if (player.direction > 0 && mazeGrid[checkY][checkX] !== CH_WALL)
         player.grow();
 
-    // paintMaze();
     drawPlayer();
 }
 
@@ -249,14 +257,55 @@ function mouse(event)
 
 function drawPlayer()
 {
-    for (let point of player.points)
+    let el = document.createElementNS(namespace, "polyline");
+    let el_tip1 = document.createElementNS(namespace, "circle");
+    let el_tip2 = document.createElementNS(namespace, "circle");
+    let svg = document.getElementById("mazeSVG");
+    
+    let elPrevious = document.getElementById("playerPL");
+    let elPrevious_t1 = document.getElementById("player_t1");
+    let elPrevious_t2 = document.getElementById("player_t2");
+
+    if (elPrevious != null) svg.removeChild(elPrevious);
+    if (elPrevious_t1 != null) svg.removeChild(elPrevious_t1);
+    if (elPrevious_t2 != null) svg.removeChild(elPrevious_t2);
+
+
+    let pointsStr = "";
+
+    for (let pt of player.points)
     {
-        drawHorizontal(point.x * columnPixels, point.y * rowPixels, columnPixels, columnPixels, playerColor);
+        let px = columnPixels * (pt.x + 1 / 2);
+        let py = rowPixels * (pt.y + 1 / 2);
+        pointsStr += (px + "," + py + " ");
     }
 
-    let lastPoint = player.points[player.points.length - 1];
+    el.setAttribute("points", pointsStr);
+    el.setAttribute("fill", "none");
+    el.setAttribute("stroke", playerColor.getCode());
+    el.setAttribute("stroke-width", columnPixels);
+    el.setAttribute("id", "playerPL");
+    svg.appendChild(el);
 
-    drawHorizontal(lastPoint.x * columnPixels, lastPoint.y * rowPixels, columnPixels, columnPixels, playerTipColor);    
+    let t1_x = columnPixels * (player.points[0].x + 1 / 2);
+    let t1_y = rowPixels * (player.points[0].y + 1 / 2);
+    el_tip1.setAttribute("cx", t1_x);
+    el_tip1.setAttribute("cy", t1_y);
+    el_tip1.setAttribute("r", columnPixels / 2);
+    el_tip1.setAttribute("fill", playerColor.getCode());
+    el_tip1.setAttribute("id", "player_t1");
+    svg.appendChild(el_tip1);
+
+
+    let t2_x = columnPixels * (player.points[player.points.length - 1].x + 1 / 2);
+    let t2_y = rowPixels * (player.points[player.points.length - 1].y + 1 / 2);
+    el_tip2.setAttribute("cx", t2_x);
+    el_tip2.setAttribute("cy", t2_y);
+    el_tip2.setAttribute("r", columnPixels / 2);
+    el_tip2.setAttribute("fill", playerTipColor.getCode());
+    el_tip2.setAttribute("id", "player_t2");
+    svg.appendChild(el_tip2);
+
 }
 
 function pointEquals(p1, p2)
