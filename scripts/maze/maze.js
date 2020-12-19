@@ -1,9 +1,12 @@
+const PI = 3.14159265;
 const COMPLEXITY_DEFAULT = 5;
 const COMPLEXITY_MIN = 3;
 const COMPLEXITY_MAX = 60;
 const MAX_ITERATIONS = 500;
 const SVG_WIDTH = 1200;
 const SVG_HEIGHT = 900;
+const SVG_RADIUS = 500;
+const SVG_CIRC = 2 * PI * SVG_RADIUS;
 const BRANCH_PERCENT = 10;
 const CH_WALL = 'X';
 const CH_SPACE = '-';
@@ -34,6 +37,8 @@ let namespace = "http://www.w3.org/2000/svg";
 
 let player = null
 let playerColor = null;
+
+let radial = false;
 
 
 function generate()
@@ -84,11 +89,28 @@ function generate()
     document.getElementById("button_solve").addEventListener("click", playerSolve);
     // document.getElementById("button_solution").addEventListener("click", computerSolve);
     // document.getElementById("button_race").addEventListener("click", race);
-    // document.getElementById("button_convert").addEventListener("click", convert);
+    document.getElementById("button_convert").addEventListener("click", convert);
     // document.getElementById("button_save").addEventListener("click", save);
 
 }
 
+function convert()
+{
+    if (!radial)
+    {
+        radial = true;
+        document.getElementById("mazeSVG").setAttribute("style", "display: none;");
+        document.getElementById("radMazeSVG").setAttribute("style", "display: block;");
+    }
+
+    else
+    {
+        radial = false;
+        document.getElementById("mazeSVG").setAttribute("style", "display: block;");
+        document.getElementById("radMazeSVG").setAttribute("style", "display: none;");
+    }
+
+}
 
 
 function drawHorizontal(x, y, length, thickness, color)
@@ -102,6 +124,37 @@ function drawHorizontal(x, y, length, thickness, color)
     el.setAttribute("height", thickness);
     el.setAttribute("fill", color.getCode());
     el.setAttribute("rx", 10);
+
+    svg.appendChild(el);
+
+}
+
+function drawArc(theta, phi, length, thickness, color)
+{
+    let sx = SVG_RADIUS - phi * Math.cos(theta);
+    let sy = SVG_RADIUS - phi * Math.sin(theta);
+
+    let dTheta = theta - (length / columns) * 2 * PI;
+    if (length > columns / 2)
+        dTheta = theta + (length / columns) * 2 * PI;
+
+    let dx = SVG_RADIUS - phi * Math.cos(dTheta);
+    let dy = SVG_RADIUS - phi * Math.sin(dTheta);
+
+    let el = document.createElementNS(namespace, "path");
+    let svg = document.getElementById("radMazeSVG");
+    let pathStr = "M " + sx + " " + sy;
+    pathStr += " A " + phi + " " + phi;
+    
+    if (length > columns / 2) pathStr += " 0 1 1 ";
+    else pathStr += " 0 0 1 ";
+
+    pathStr += dx + " " + dy;
+
+    el.setAttribute("d", pathStr);
+    el.setAttribute("fill", "none");
+    el.setAttribute("stroke", color.getCode());
+    el.setAttribute("stroke-width", thickness);
 
     svg.appendChild(el);
 
@@ -139,6 +192,7 @@ function playerSolve()
     window.addEventListener("keydown", keyDown, true);
 
     drawPlayer();
+
 }
 
 function keyDown(event)
@@ -200,6 +254,7 @@ function keyDown(event)
         player.grow();
 
     drawPlayer();
+
 }
 
 function keyUp(event)
