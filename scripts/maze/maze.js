@@ -1,178 +1,22 @@
-const PI = 3.14159265;
-const COMPLEXITY_DEFAULT = 5;
-const COMPLEXITY_MIN = 3;
-const COMPLEXITY_MAX = 60;
-const MAX_ITERATIONS = 500;
-const SVG_WIDTH = 1200;
-const SVG_HEIGHT = 900;
-const SVG_RADIUS = 500;
-const SVG_CIRC = 2 * PI * SVG_RADIUS;
-const BRANCH_PERCENT = 10;
-const CH_WALL = 'X';
-const CH_SPACE = '-';
-const FILENAME_DEFAULT = "maze_default";
+const SVG_NAMESPACE = "http://www.w3.org/2000/svg";
 
-let complexity = 20;
-let mazeGrid = [];
-let paths = [];
-let branches = [];
-let rows = complexity * 3;
-let columns = complexity * 4;
-let columnPixels = SVG_WIDTH / columns;
-let rowPixels = SVG_HEIGHT / rows;
-let wall_left = 0;
-let wall_top = 0;
-let wall_right = columns - 1;
-let wall_bottom = rows - 1;
-let while_control = 0;
-
-let startPoint = {x: 0, y: 0};
-let exitPoint = {x: 0, y: 0};
-
-let wallColor = null;
-let spaceColor = null;
-
-let filename = FILENAME_DEFAULT;
-let namespace = "http://www.w3.org/2000/svg";
-
-let player = null
-let playerColor = null;
-
-let radial = false;
-
+let newMaze = null;
 
 function generate()
 {
     console.log("Generate function!");
 
-    rows = complexity * 3;
-    columns = complexity * 4;
-
-    initMaze();
-
-    // Create the seed WallPaths... Around the entrance and exit
-    addPath(startPoint.x - 1, startPoint.y + 1, 2);
-    addPath(startPoint.x + 1, startPoint.y + 1, 2);
-    addPath(exitPoint.x - 1, exitPoint.y - 1, 1);
-    addPath(exitPoint.x + 1, exitPoint.y - 1, 1);
-    addTopWallPaths();
-    addBottomWallPaths();
-    addLeftWallPaths();
-    addRightWallPaths();
-    addRandomInteriorPaths(complexity);
-
-    // Grow main paths
-    for (let i = 0; i < MAX_ITERATIONS; ++i)
-    {
-        growPaths();
-    }
-
-    // Fill in little gaps
-    while_control = 0;
-    while (!isComplete())
-    {
-        growPaths();
-        ++while_control;
-        if (while_control > 1000)
-            break;
-    }
-
-    randomizeColors();
-    paintMaze();
+    newMaze = new Maze(document.getElementById("complexity-select").value);
 
     document.getElementById("button_solve").removeAttribute("disabled");
     document.getElementById("button_solution").removeAttribute("disabled");
     document.getElementById("button_race").removeAttribute("disabled");
-    document.getElementById("button_convert").removeAttribute("disabled");
     document.getElementById("button_save").removeAttribute("disabled");
 
     document.getElementById("button_solve").addEventListener("click", playerSolve);
     // document.getElementById("button_solution").addEventListener("click", computerSolve);
     // document.getElementById("button_race").addEventListener("click", race);
-    document.getElementById("button_convert").addEventListener("click", convert);
     // document.getElementById("button_save").addEventListener("click", save);
-
-}
-
-function convert()
-{
-    if (!radial)
-    {
-        radial = true;
-        document.getElementById("mazeSVG").setAttribute("style", "display: none;");
-        document.getElementById("radMazeSVG").setAttribute("style", "display: block;");
-    }
-
-    else
-    {
-        radial = false;
-        document.getElementById("mazeSVG").setAttribute("style", "display: block;");
-        document.getElementById("radMazeSVG").setAttribute("style", "display: none;");
-    }
-
-}
-
-
-function drawHorizontal(x, y, length, thickness, color)
-{
-    let el = document.createElementNS(namespace, "rect");
-    let svg = document.getElementById("mazeSVG");
-
-    el.setAttribute("x", x);
-    el.setAttribute("y", y);
-    el.setAttribute("width", length);
-    el.setAttribute("height", thickness);
-    el.setAttribute("fill", color.getCode());
-    el.setAttribute("rx", 10);
-
-    svg.appendChild(el);
-
-}
-
-function drawArc(theta, phi, length, thickness, color)
-{
-    let sx = SVG_RADIUS - phi * Math.cos(theta);
-    let sy = SVG_RADIUS - phi * Math.sin(theta);
-
-    let dTheta = theta - (length / columns) * 2 * PI;
-    if (length > columns / 2)
-        dTheta = theta + (length / columns) * 2 * PI;
-
-    let dx = SVG_RADIUS - phi * Math.cos(dTheta);
-    let dy = SVG_RADIUS - phi * Math.sin(dTheta);
-
-    let el = document.createElementNS(namespace, "path");
-    let svg = document.getElementById("radMazeSVG");
-    let pathStr = "M " + sx + " " + sy;
-    pathStr += " A " + phi + " " + phi;
-    
-    if (length > columns / 2) pathStr += " 0 1 1 ";
-    else pathStr += " 0 0 1 ";
-
-    pathStr += dx + " " + dy;
-
-    el.setAttribute("d", pathStr);
-    el.setAttribute("fill", "none");
-    el.setAttribute("stroke", color.getCode());
-    el.setAttribute("stroke-width", thickness);
-
-    svg.appendChild(el);
-
-}
-
-function drawVertical(x, y, length, thickness, color)
-{
-    let el = document.createElementNS(namespace, "rect");
-    let svg = document.getElementById("mazeSVG");
-
-    el.setAttribute("x", x);
-    el.setAttribute("y", y);
-    el.setAttribute("width", thickness);
-    el.setAttribute("height", length);
-    el.setAttribute("fill", color.getCode());
-    el.setAttribute("rx", 10);
-
-    svg.appendChild(el);
 
 }
 
@@ -307,6 +151,22 @@ function mouse(event)
         player.grow();
 
     drawPlayer();
+
+}
+
+function drawHorizontal(x, y, length, thickness, color)
+{
+    let el = document.createElementNS("http:///www.w3.org/2000/svg", "rect");
+    let svg = document.getElementById("mazeSVG");
+
+    el.setAttribute("x", x);
+    el.setAttribute("y", y);
+    el.setAttribute("width", length);
+    el.setAttribute("height", thickness);
+    el.setAttribute("fill", color.getCode());
+    el.setAttribute("rx", 10);
+
+    svg.appendChild(el);
 
 }
 

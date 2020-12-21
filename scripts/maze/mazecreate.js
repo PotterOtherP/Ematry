@@ -1,488 +1,628 @@
-function addPath(x, y, d)
-{
-    if (mazeGrid[y][x] == CH_SPACE)
+const COMPLEXITY_DEFAULT = 5;
+const COMPLEXITY_MIN = 3;
+const COMPLEXITY_MAX = 60;
+const MAX_ITERATIONS = 500;
+const SVG_WIDTH = 1200;
+const SVG_HEIGHT = 900;
+const BRANCH_PERCENT = 10;
+const CH_WALL = 'X';
+const CH_SPACE = '-';
+const FILENAME_DEFAULT = "maze_default";
+
+class Maze {
+
+    constructor(comp)
     {
-        paths.push(new WallPath(x, y, d));
-        mazeGrid[y][x] = CH_WALL;
+        this.complexity = (comp >= COMPLEXITY_MIN && comp <= COMPLEXITY_MAX) ? comp : COMPLEXITY_DEFAULT;
+        this.mazeGrid = [];
+        this.paths = [];
+        this.branches = [];
+        this.rows = this.complexity * 3;
+        this.columns = this.complexity * 4;
+        this.columnPixels = SVG_WIDTH / this.columns;
+        this.rowPixels = SVG_HEIGHT / this.rows;
+        this.wall_left = 0;
+        this.wall_top = 0;
+        this.wall_right = this.columns - 1;
+        this.wall_bottom = this.rows - 1;
+        this.while_control = 0;
+
+        this.startPoint = {x: 0, y: 0};
+        this.exitPoint = {x: 0, y: 0};
+
+        this.wallColor = null;
+        this.spaceColor = null;
+
+        this.filename = FILENAME_DEFAULT;
+        this.namespace = SVG_NAMESPACE;
+
+        this.player = null;
+        this.playerColor = null;
+
+        this.initMaze();
+        this.randomizeColors();
+
+        // Create the seed WallPaths... Around the entrance and exit
+        this.addPath(this.startPoint.x - 1, this.startPoint.y + 1, 2);
+        this.addPath(this.startPoint.x + 1, this.startPoint.y + 1, 2);
+        this.addPath(this.exitPoint.x - 1, this.exitPoint.y - 1, 1);
+        this.addPath(this.exitPoint.x + 1, this.exitPoint.y - 1, 1);
+        this.addTopWallPaths();
+        this.addBottomWallPaths();
+        this.addLeftWallPaths();
+        this.addRightWallPaths();
+        // this.addRandomInteriorPaths(this.complexity);
+
+        // // Grow main paths
+        for (let i = 0; i < MAX_ITERATIONS; ++i)
+        {
+            this.growPaths();
+        }
+
+        // Fill in little gaps
+        // this.while_control = 0;
+        // while (!this.isComplete())
+        // {
+        //     this.growPaths();
+        //     ++this.while_control;
+        //     if (this.while_control > 1000)
+        //         break;
+        // }
+
+
+
+        this.paintMaze();
+
     }
 
-}
-
-function addTopWallPaths()
-{
-    let pathY = wall_top + 1;
-    let xCoords = [];
-
-    if (startPoint.x >= columns / 2)
-        xCoords.push(getRandom(startPoint.x - 4) + 2);
-    else
-        xCoords.push(getRandom(columns - startPoint.x - 2) + startPoint.x + 1);
-
-    addPath(xCoords[0], pathY, 2);
-
-    for (let i = 1; i < complexity / 2; ++i)
+    addPath(x, y, d)
     {
-        let nextX = xCoords[0];
-        let condition = true;
-
-        // This is to make sure the next path is at least 2 grid units away from
-        // any other path and 3 units away from the maze entrance.
-        while (condition)
+        if (this.mazeGrid[y][x] == CH_SPACE)
         {
-            nextX = getRandom(columns - 4) + 2;
-            condition = false;
+            this.paths.push(new WallPath(x, y, d));
+            this.mazeGrid[y][x] = CH_WALL;
+        }
 
-            for (let j = 0; j < i; ++j)
+    }
+
+    addTopWallPaths()
+    {
+        let pathY = this.wall_top + 1;
+        let xCoords = [];
+
+        if (this.startPoint.x >= this.columns / 2)
+            xCoords.push(getRandom(this.startPoint.x - 4) + 2);
+        else
+            xCoords.push(getRandom(this.columns - this.startPoint.x - 2) + this.startPoint.x + 1);
+
+        this.addPath(xCoords[0], pathY, 2);
+
+        for (let i = 1; i < this.complexity / 2; ++i)
+        {
+            let nextX = xCoords[0];
+            let condition = true;
+
+            // This is to make sure the next path is at least 2 grid units away from
+            // any other path and 3 units away from the maze entrance.
+            while (condition)
             {
-                if (Math.abs(nextX - xCoords[j]) < 2)
+                nextX = getRandom(this.columns - 4) + 2;
+                condition = false;
+
+                for (let j = 0; j < i; ++j)
+                {
+                    if (Math.abs(nextX - xCoords[j]) < 2)
+                        condition = true;
+                }
+
+                if (Math.abs(nextX - this.startPoint.x) < 3)
                     condition = true;
             }
 
-            if (Math.abs(nextX - startPoint.x) < 3)
-                condition = true;
+            xCoords.push(nextX);
+            this.addPath(nextX, pathY, 2);
         }
 
-        xCoords.push(nextX);
-        addPath(nextX, pathY, 2);
     }
 
-}
-
-function addBottomWallPaths()
-{
-
-    let pathY = wall_bottom - 1;
-    let xCoords = [];
-
-    if (exitPoint.x >= columns / 2)
-        xCoords.push(getRandom(exitPoint.x - 4) + 2);
-    else
-        xCoords.push(getRandom(columns - exitPoint.x - 2) + exitPoint.x + 1);
-
-    addPath(xCoords[0], pathY, 1);
-
-    for (let i = 1; i < complexity / 2; ++i)
+    addBottomWallPaths()
     {
-        let nextX = xCoords[0];
-        let condition = true;
 
-        // This is to make sure the next path is at least 2 grid units away from
-        // any other path and 3 units away from the maze exit.
-        while (condition)
+        let pathY = this.wall_bottom - 1;
+        let xCoords = [];
+
+        if (this.exitPoint.x >= this.columns / 2)
+            xCoords.push(getRandom(this.exitPoint.x - 4) + 2);
+        else
+            xCoords.push(getRandom(this.columns - this.exitPoint.x - 2) + this.exitPoint.x + 1);
+
+        this.addPath(xCoords[0], pathY, 1);
+
+        for (let i = 1; i < this.complexity / 2; ++i)
         {
-            nextX = getRandom(columns - 4) + 2;
-            condition = false;
+            let nextX = xCoords[0];
+            let condition = true;
 
-            for (let j = 0; j < i; ++j)
+            // This is to make sure the next path is at least 2 grid units away from
+            // any other path and 3 units away from the maze exit.
+            while (condition)
             {
-                if (Math.abs(nextX - xCoords[j]) < 2)
+                nextX = getRandom(this.columns - 4) + 2;
+                condition = false;
+
+                for (let j = 0; j < i; ++j)
+                {
+                    if (Math.abs(nextX - xCoords[j]) < 2)
+                        condition = true;
+                }
+
+                if (Math.abs(nextX - this.exitPoint.x) < 3)
                     condition = true;
             }
 
-            if (Math.abs(nextX - exitPoint.x) < 3)
-                condition = true;
+            xCoords.push(nextX);
+            this.addPath(nextX, pathY, 1);
         }
 
-        xCoords.push(nextX);
-        addPath(nextX, pathY, 1);
     }
 
-}
-
-function addLeftWallPaths()
-{
-    let pathX = wall_left + 1;
-    let yCoords = [];
-
-    yCoords.push(getRandom(rows - 4) + 2);
-    addPath(pathX, yCoords[0], 4);
-
-    for (let i = 1; i < complexity / 2; ++i)
+    addLeftWallPaths()
     {
-        let nextY = yCoords[0];
-        let condition = true;
+        let pathX = this.wall_left + 1;
+        let yCoords = [];
 
-        while (condition)
+        yCoords.push(getRandom(this.rows - 4) + 2);
+        this.addPath(pathX, yCoords[0], 4);
+
+        for (let i = 1; i < this.complexity / 2; ++i)
         {
-            nextY = getRandom(rows - 4) + 2;
-            condition = false;
+            let nextY = yCoords[0];
+            let condition = true;
 
-            for (let j = 0; j < i; ++j)
+            while (condition)
             {
-                if (Math.abs(nextY - yCoords[j]) < 2)
-                    condition = true;
+                nextY = getRandom(this.rows - 4) + 2;
+                condition = false;
+
+                for (let j = 0; j < i; ++j)
+                {
+                    if (Math.abs(nextY - yCoords[j]) < 2)
+                        condition = true;
+                }
+            }
+
+            yCoords.push(nextY);
+            this.addPath(pathX, nextY, 4);
+        }
+
+    }
+
+    addRightWallPaths()
+    {
+        let pathX = this.wall_right - 1;
+        let yCoords = [];
+
+        yCoords.push(getRandom(this.rows - 4) + 2);
+        this.addPath(pathX, yCoords[0], 3);
+
+        for (let i = 1; i < this.complexity / 2; ++i)
+        {
+            let nextY = yCoords[0];
+            let condition = true;
+
+            while (condition)
+            {
+                nextY = getRandom(this.rows - 4) + 2;
+                condition = false;
+
+                for (let j = 0; j < i; ++j)
+                {
+                    if (Math.abs(nextY - yCoords[j]) < 2)
+                        condition = true;
+                }
+            }
+
+            yCoords.push(nextY);
+            this.addPath(pathX, nextY, 3);
+        }
+
+    }
+
+    addRandomInteriorPaths(num)
+    {
+        for (let i = 0; i < num; ++i)
+        {
+            let randX = getRandom(this.columns - 4) + 2;
+            let randY = getRandom(this.rows - 4) + 2;
+            let randD = getRandom(4) + 1;
+            let condition = true;
+
+            for (let j = randY - 1; j <= randY + 1; ++j)
+                for (let k = randX - 1; k <= randX + 1; ++k)
+                    if (this.mazeGrid[j][k] == CH_WALL)
+                        condition = false;
+
+            if (condition)
+            {
+                this.addPath(randX, randY, randD);
+                this.mazeGrid[randY][randX] = CH_WALL;
             }
         }
 
-        yCoords.push(nextY);
-        addPath(pathX, nextY, 4);
     }
 
-}
-
-function addRightWallPaths()
-{
-    let pathX = wall_right - 1;
-    let yCoords = [];
-
-    yCoords.push(getRandom(rows - 4) + 2);
-    addPath(pathX, yCoords[0], 3);
-
-    for (let i = 1; i < complexity / 2; ++i)
+    drawHorizontal(x, y, length, thickness, color)
     {
-        let nextY = yCoords[0];
-        let condition = true;
+        let el = document.createElementNS(SVG_NAMESPACE, "rect");
+        let svg = document.getElementById("mazeSVG");
 
-        while (condition)
-        {
-            nextY = getRandom(rows - 4) + 2;
-            condition = false;
+        el.setAttribute("x", x);
+        el.setAttribute("y", y);
+        el.setAttribute("width", length);
+        el.setAttribute("height", thickness);
+        el.setAttribute("fill", color.getCode());
+        el.setAttribute("rx", 10);
 
-            for (let j = 0; j < i; ++j)
-            {
-                if (Math.abs(nextY - yCoords[j]) < 2)
-                    condition = true;
-            }
-        }
+        svg.appendChild(el);
 
-        yCoords.push(nextY);
-        addPath(pathX, nextY, 3);
     }
 
-}
-
-function addRandomInteriorPaths(num)
-{
-    for (let i = 0; i < num; ++i)
+    drawVertical(x, y, length, thickness, color)
     {
-        let randX = getRandom(columns - 4) + 2;
-        let randY = getRandom(rows - 4) + 2;
-        let randD = getRandom(4) + 1;
-        let condition = true;
+        let el = document.createElementNS(SVG_NAMESPACE, "rect");
+        let svg = document.getElementById("mazeSVG");
 
-        for (let j = randY - 1; j <= randY + 1; ++j)
-            for (let k = randX - 1; k <= randX + 1; ++k)
-                if (mazeGrid[j][k] == CH_WALL)
-                    condition = false;
+        el.setAttribute("x", x);
+        el.setAttribute("y", y);
+        el.setAttribute("width", thickness);
+        el.setAttribute("height", length);
+        el.setAttribute("fill", color.getCode());
+        el.setAttribute("rx", 10);
 
-        if (condition)
-        {
-            addPath(randX, randY, randD);
-            mazeGrid[randY][randX] = CH_WALL;
-        }
+        svg.appendChild(el);
+
     }
 
-}
-
-function growPaths()
-{
-    for (let path of paths)
+    growPaths()
     {
-        let roll = getRandom(100) + 1;
-
-        if (path.active && pathIsClear(path.getCheckPoint(), path.direction))
+        for (let path of this.paths)
         {
-            if (roll <= 70)
+            let roll = getRandom(100);
+
+            if (roll <= 75 && path.active &&
+                this.pathIsClear(path.getCheckPoint(path.direction), path.direction))
             {
                 path.grow();
-                path.checkActive();
             }
 
             else
+            {
                 path.changeDirection();
-        }
+            }
 
-        else
-        {
-            path.changeDirection();
-        }
+            path.active = false;
 
-        if (!path.active && roll <= BRANCH_PERCENT)
-        {
-            branches.push(path.branch());
-        }
-
-        // update the grid letters
-        for (let pt of path.points)
-        {
-            mazeGrid[pt.y][pt.x] = CH_WALL;
-        }
-    }
-
-    for (let branch of branches)
-    {
-        if (pathIsClear(branch.getBranchCheckPoint(), branch.direction))
-            paths.push(branch);
-    }
-
-    branches = [];
-
-}
-
-function initMaze()
-{
-    mazeGrid = [];
-    paths = [];
-    branches = [];
-
-    for (let i = 0; i < rows; ++i)
-    {
-        mazeGrid.push([]);
-
-        for (let j = 0; j < columns; ++j)
-        {
-            if (i == wall_top || i == wall_bottom || j == wall_left || j == wall_right)
-                mazeGrid[i].push(CH_WALL);
-            else
-                mazeGrid[i].push(CH_SPACE);
-        }
-    }
-
-    let startX = getRandom(columns - 6) + 3;
-    let exitX = getRandom(columns - 6) + 3;
-
-    mazeGrid[wall_top][startX] = 'S';
-    mazeGrid[wall_bottom][exitX] = 'E';
-
-    startPoint = {x: startX, y: wall_top};
-    exitPoint = {x: exitX, y: wall_bottom};
-
-}
-
-function isComplete()
-{
-    let result = true;
-
-    // Horizontal set of 2 x 3 points
-    for (let i = 1; i < rows - 2; ++i)
-    {
-        for (let j = 1; j < columns - 2; ++j)
-        {
-            if (mazeGrid[i][j] == CH_SPACE &&
-                mazeGrid[i][j + 1] == CH_SPACE &&
-                mazeGrid[i][j - 1] == CH_SPACE &&
-                mazeGrid[i + 1][j] == CH_SPACE &&
-                mazeGrid[i + 1][j + 1] == CH_SPACE &&
-                mazeGrid[i + 1][j - 1] == CH_SPACE)
+            for (let i = 1; i <= 4; ++i)
             {
-                let roll = getRandom(2);
+                if (this.pathIsClear(path.getCheckPoint(i), i))
+                    path.active = true;
+            }
 
-                if (roll == 0 && mazeGrid[i - 1][j] == CH_WALL)
+            if (!path.active && roll <= BRANCH_PERCENT)
+            {
+                // this.branches.push(path.branch());
+            }
+
+            // update the grid letters
+            for (let pt of path.points)
+            {
+                this.mazeGrid[pt.y][pt.x] = CH_WALL;
+            }
+        }
+
+        for (let branch of this.branches)
+        {
+            if (pathIsClear(branch.getBranchCheckPoint(), branch.direction))
+                this.paths.push(branch);
+        }
+
+        this.branches = [];
+
+    }
+
+    initMaze()
+    {
+        this.mazeGrid = [];
+        this.paths = [];
+        this.branches = [];
+
+        for (let i = 0; i < this.rows; ++i)
+        {
+            this.mazeGrid.push([]);
+
+            for (let j = 0; j < this.columns; ++j)
+            {
+                if (i == this.wall_top || i == this.wall_bottom ||
+                    j == this.wall_left || j == this.wall_right)
+                    this.mazeGrid[i].push(CH_WALL);
+                else
+                    this.mazeGrid[i].push(CH_SPACE);
+            }
+        }
+
+        let startX = getRandom(this.columns - 6) + 3;
+        let exitX = getRandom(this.columns - 6) + 3;
+
+        this.mazeGrid[this.wall_top][startX] = 'S';
+        this.mazeGrid[this.wall_bottom][exitX] = 'E';
+
+        this.startPoint = {x: startX, y: this.wall_top};
+        this.exitPoint = {x: exitX, y: this.wall_bottom};
+
+        this.addPath(this.startPoint.x - 1, this.startPoint.y + 1, 2);
+        this.addPath(this.startPoint.x + 1, this.startPoint.y + 1, 2);
+        this.addPath(this.exitPoint.x - 1, this.exitPoint.y - 1, 1);
+        this.addPath(this.exitPoint.x + 1, this.exitPoint.y - 1, 1);
+
+    }
+
+    isComplete()
+    {
+        let result = true;
+
+        // Horizontal set of 2 x 3 points
+        for (let i = 1; i < this.rows - 2; ++i)
+        {
+            for (let j = 1; j < this.columns - 2; ++j)
+            {
+                if (this.mazeGrid[i][j] == CH_SPACE &&
+                    this.mazeGrid[i][j + 1] == CH_SPACE &&
+                    this.mazeGrid[i][j - 1] == CH_SPACE &&
+                    this.mazeGrid[i + 1][j] == CH_SPACE &&
+                    this.mazeGrid[i + 1][j + 1] == CH_SPACE &&
+                    this.mazeGrid[i + 1][j - 1] == CH_SPACE)
                 {
-                    addPath(j, i, 2);
+                    let roll = getRandom(2);
+
+                    if (roll == 0 && this.mazeGrid[i - 1][j] == CH_WALL)
+                    {
+                        this.addPath(j, i, 2);
+                    }
+
+                    else if (roll == 1 && this.mazeGrid[i + 2][j] == CH_WALL)
+                    {
+                        this.addPath(j, i + 1, 1);
+                    }
+
+                    result = false;
+                }
+            }
+        }
+
+        // Vertical set of 2 x 3 points
+        for (let i = 1; i < this.rows - 2; ++i)
+        {
+            for (let j = 1; j < this.columns - 2; ++j)
+            {
+                if (this.mazeGrid[i][j] == CH_SPACE &&
+                    this.mazeGrid[i][j + 1] == CH_SPACE &&
+                    this.mazeGrid[i - 1][j] == CH_SPACE &&
+                    this.mazeGrid[i - 1][j + 1] == CH_SPACE &&
+                    this.mazeGrid[i + 1][j] == CH_SPACE &&
+                    this.mazeGrid[i + 1][j + 1] == CH_SPACE)
+                {
+                    let roll = getRandom(2);
+
+                    if (roll == 0 && this.mazeGrid[i - 1][j] == CH_WALL)
+                    {
+                        this.addPath(j, i, 3);
+                    }
+
+                    else if (roll == 1 && this.mazeGrid[i + 2][j] == CH_WALL)
+                    {
+                        this.addPath(j + 1, i, 4);
+                    }
+
+                    result = false;
+                }
+            }
+        }
+
+        return result;
+
+    }
+
+    paintBackground(c)
+    {
+
+        let el = document.createElementNS(SVG_NAMESPACE, "rect");
+        let svg = document.getElementById("mazeSVG");
+        svg.innerHTML = "";
+
+
+        el.setAttribute("x", 0);
+        el.setAttribute("y", 0);
+        el.setAttribute("width", SVG_WIDTH);
+        el.setAttribute("height", SVG_HEIGHT);
+        el.setAttribute("fill", c.getCode());
+
+        svg.appendChild(el);
+
+
+    }
+
+    paintMaze()
+    {
+        let svg = document.getElementById("mazeSVG");
+        svg.innerHTML = "";
+        this.paintBackground(this.spaceColor);
+
+        // Horizontal wall sections
+        for (let i = 0; i < this.rows; ++i)
+        {
+            let sectionLength = 0;
+            let sectionX = 0;
+            let sectionY = i * this.rowPixels;
+
+            for (let j = 0; j < this.columns; ++j)
+            {
+                if (this.mazeGrid[i][j] == CH_WALL)
+                {
+                    if (sectionLength == 0)
+                        sectionX = j * this.columnPixels;
+
+                    ++sectionLength;
                 }
 
-                else if (roll == 1 && mazeGrid[i + 2][j] == CH_WALL)
+                if (this.mazeGrid[i][j] != CH_WALL || j == this.columns - 1)
                 {
-                    addPath(j, i + 1, 1);
+                    if (sectionLength > 1)
+                    {
+                        this.drawHorizontal(sectionX, sectionY, sectionLength * this.columnPixels, this.rowPixels, this.wallColor);
+                        // let theta = (sectionX / SVG_WIDTH) * 2 * PI;
+                        // let phi = SVG_RADIUS - (radPixels * i) - (radPixels / 2);
+                        // drawArc(theta, phi, sectionLength, radPixels, wallColor);
+                    }
+
+                    sectionLength = 0;
+                }
+            }
+        }
+
+        // Vertical wall sections
+        for (let i = 0; i < this.columns; ++i)
+        {
+            let sectionLength = 0;
+            let sectionX = i * this.columnPixels;
+            let sectionY = 0;
+
+            for (let j = 0; j < this.rows; ++j)
+            {
+                if (this.mazeGrid[j][i] == CH_WALL)
+                {
+                    if (sectionLength == 0)
+                        sectionY = j * this.rowPixels;
+
+                    ++sectionLength;
                 }
 
-                result = false;
-            }
-        }
-    }
-
-    // Vertical set of 2 x 3 points
-    for (let i = 1; i < rows - 2; ++i)
-    {
-        for (let j = 1; j < columns - 2; ++j)
-        {
-            if (mazeGrid[i][j] == CH_SPACE &&
-                mazeGrid[i][j + 1] == CH_SPACE &&
-                mazeGrid[i - 1][j] == CH_SPACE &&
-                mazeGrid[i - 1][j + 1] == CH_SPACE &&
-                mazeGrid[i + 1][j] == CH_SPACE &&
-                mazeGrid[i + 1][j + 1] == CH_SPACE)
-            {
-                let roll = getRandom(2);
-
-                if (roll == 0 && mazeGrid[i - 1][j] == CH_WALL)
+                if (this.mazeGrid[j][i] != CH_WALL || j == this.rows - 1)
                 {
-                    addPath(j, i, 3);
+                    if (sectionLength > 1)
+                    {
+                        this.drawVertical(sectionX, sectionY, sectionLength * this.rowPixels, this.columnPixels, this.wallColor);
+                        // let theta = (i / (columns - 1)) * 2 * PI;
+                        // let phi = SVG_RADIUS - (radPixels * (rows - j - 1));
+                        // drawRadial(theta, phi, sectionLength, radPixels, wallColor);
+                    } 
+
+                    sectionLength = 0;
                 }
-
-                else if (roll == 1 && mazeGrid[i + 2][j] == CH_WALL)
-                {
-                    addPath(j + 1, i, 4);
-                }
-
-                result = false;
             }
         }
-    }
-
-    return result;
-
-}
-
-function paintBackground(c)
-{
-
-    let el = document.createElementNS(namespace, "rect");
-    let svg = document.getElementById("mazeSVG");
-    svg.innerHTML = "";
-
-
-
-
-    el.setAttribute("x", 0);
-    el.setAttribute("y", 0);
-    el.setAttribute("width", SVG_WIDTH);
-    el.setAttribute("height", SVG_HEIGHT);
-    el.setAttribute("fill", c.getCode());
-
-    svg.appendChild(el);
-
-}
-
-function paintMaze()
-{
-    let svg = document.getElementById("mazeSVG");
-    svg.innerHTML = "";
-    paintBackground(spaceColor);
-
-    // Horizontal wall sections
-    for (let i = 0; i < rows; ++i)
-    {
-        let sectionLength = 0;
-        let sectionX = 0;
-        let sectionY = i * rowPixels;
-
-        for (let j = 0; j < columns; ++j)
-        {
-            if (mazeGrid[i][j] == CH_WALL)
-            {
-                if (sectionLength == 0)
-                    sectionX = j * columnPixels;
-
-                ++sectionLength;
-            }
-
-            if (mazeGrid[i][j] != CH_WALL || j == columns - 1)
-            {
-                if (sectionLength > 1)
-                    drawHorizontal(sectionX, sectionY, sectionLength * columnPixels, rowPixels, wallColor);
-
-                sectionLength = 0;
-            }
-        }
-    }
-
-    // Vertical wall sections
-    for (let i = 0; i < columns; ++i)
-    {
-        let sectionLength = 0;
-        let sectionX = i * columnPixels;
-        let sectionY = 0;
-
-        for (let j = 0; j < rows; ++j)
-        {
-            if (mazeGrid[j][i] == CH_WALL)
-            {
-                if (sectionLength == 0)
-                    sectionY = j * rowPixels;
-
-                ++sectionLength;
-            }
-
-            if (mazeGrid[j][i] != CH_WALL || j == rows - 1)
-            {
-                if (sectionLength > 1)
-                    drawVertical(sectionX, sectionY, sectionLength * rowPixels, columnPixels, wallColor);
-
-                sectionLength = 0;
-            }
-        }
-    }
-    
-}
-
-function pathIsClear(pt, dir)
-{
-    let checkX = Math.max(wall_left, pt.x);
-    let checkY = Math.max(wall_top, pt.y);
-
-    checkX = Math.min(wall_right, checkX);
-    checkY = Math.min(wall_bottom, checkY);
-
-    // console.log("checkY = " + checkY);
-    // console.log("checkX = " + checkX);
-    // console.log("mazeGrid[checkY][checkX] = " + mazeGrid[checkY][checkX]);
-    if (mazeGrid[checkY][checkX] == CH_WALL)
-        return false;
-
-    switch (dir)
-    {
-        case 1:
-        {
-            if (mazeGrid[checkY][checkX + 1] == CH_WALL     ||
-                mazeGrid[checkY][checkX - 1] == CH_WALL     ||
-                mazeGrid[checkY + 1][checkX + 1] == CH_WALL ||
-                mazeGrid[checkY + 1][checkX] == CH_WALL     ||
-                mazeGrid[checkY + 1][checkX - 1] == CH_WALL)
-            {
-                return false;
-            }
-
-        } break;
         
-        case 2:
-        {
-            if (mazeGrid[checkY][checkX + 1] == CH_WALL     ||
-                mazeGrid[checkY][checkX - 1] == CH_WALL     ||
-                mazeGrid[checkY - 1][checkX + 1] == CH_WALL ||
-                mazeGrid[checkY - 1][checkX] == CH_WALL     ||
-                mazeGrid[checkY - 1][checkX - 1] == CH_WALL)
-            {
-                return false;
-            }
-
-        } break;
-
-        case 3:
-        {
-            if (mazeGrid[checkY + 1][checkX] == CH_WALL     ||
-                mazeGrid[checkY - 1][checkX] == CH_WALL     ||
-                mazeGrid[checkY + 1][checkX + 1] == CH_WALL ||
-                mazeGrid[checkY][checkX + 1] == CH_WALL     ||
-                mazeGrid[checkY - 1][checkX + 1] == CH_WALL)
-            {   
-                return false;
-            }
-
-        } break;
-
-        case 4:
-        {
-            if (mazeGrid[checkY + 1][checkX] == CH_WALL     ||
-                mazeGrid[checkY - 1][checkX] == CH_WALL     ||
-                mazeGrid[checkY + 1][checkX - 1] == CH_WALL ||
-                mazeGrid[checkY][checkX - 1] == CH_WALL     ||
-                mazeGrid[checkY - 1][checkX - 1] == CH_WALL)
-            {   
-                return false;
-            }
-
-        } break;
-
-        default: {} break;
     }
-        
-    return true;
+
+    pathIsClear(pt, dir)
+    {
+        let checkX = Math.max(this.wall_left, pt.x);
+        let checkY = Math.max(this.wall_top, pt.y);
+
+        checkX = Math.min(this.wall_right, checkX);
+        checkY = Math.min(this.wall_bottom, checkY);
+
+        if (this.mazeGrid[checkY][checkX] == CH_WALL)
+            return false;
+
+        switch (dir)
+        {
+            case 1:
+            {
+                if (this.mazeGrid[checkY][checkX + 1] == CH_WALL     ||
+                    this.mazeGrid[checkY][checkX - 1] == CH_WALL     ||
+                    this.mazeGrid[checkY + 1][checkX + 1] == CH_WALL ||
+                    this.mazeGrid[checkY + 1][checkX] == CH_WALL     ||
+                    this.mazeGrid[checkY + 1][checkX - 1] == CH_WALL)
+                {
+                    return false;
+                }
+
+            } break;
+            
+            case 2:
+            {
+                if (this.mazeGrid[checkY][checkX + 1] == CH_WALL     ||
+                    this.mazeGrid[checkY][checkX - 1] == CH_WALL     ||
+                    this.mazeGrid[checkY - 1][checkX + 1] == CH_WALL ||
+                    this.mazeGrid[checkY - 1][checkX] == CH_WALL     ||
+                    this.mazeGrid[checkY - 1][checkX - 1] == CH_WALL)
+                {
+                    return false;
+                }
+
+            } break;
+
+            case 3:
+            {
+                if (this.mazeGrid[checkY + 1][checkX] == CH_WALL     ||
+                    this.mazeGrid[checkY - 1][checkX] == CH_WALL     ||
+                    this.mazeGrid[checkY + 1][checkX + 1] == CH_WALL ||
+                    this.mazeGrid[checkY][checkX + 1] == CH_WALL     ||
+                    this.mazeGrid[checkY - 1][checkX + 1] == CH_WALL)
+                {   
+                    return false;
+                }
+
+            } break;
+
+            case 4:
+            {
+                if (this.mazeGrid[checkY + 1][checkX] == CH_WALL     ||
+                    this.mazeGrid[checkY - 1][checkX] == CH_WALL     ||
+                    this.mazeGrid[checkY + 1][checkX - 1] == CH_WALL ||
+                    this.mazeGrid[checkY][checkX - 1] == CH_WALL     ||
+                    this.mazeGrid[checkY - 1][checkX - 1] == CH_WALL)
+                {   
+                    return false;
+                }
+
+            } break;
+
+            default: {} break;
+        }
+            
+        return true;
+
+    }
+
+    randomizeColors()
+    {
+        let spaceRed = getRandom(40) + 190;
+        let spaceGreen = getRandom(40) + 190;
+        let spaceBlue = getRandom(40) + 190;
+
+        let wallRed = 255 - spaceRed;
+        let wallGreen = 255 - spaceGreen;
+        let wallBlue = 255 - spaceBlue;
+
+        this.wallColor = new ColorRGB(wallRed, wallGreen, wallBlue);
+        this.spaceColor = new ColorRGB(spaceRed, spaceGreen, spaceBlue);
+
+    }
+
+
 
 }
 
-function randomizeColors()
-{
-    let spaceRed = getRandom(40) + 190;
-    let spaceGreen = getRandom(40) + 190;
-    let spaceBlue = getRandom(40) + 190;
 
-    let wallRed = 255 - spaceRed;
-    let wallGreen = 255 - spaceGreen;
-    let wallBlue = 255 - spaceBlue;
 
-    wallColor = new ColorRGB(wallRed, wallGreen, wallBlue);
-    spaceColor = new ColorRGB(spaceRed, spaceGreen, spaceBlue);
 
-}
+
+
+
+
+
+
+
+
+

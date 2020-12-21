@@ -143,6 +143,9 @@ class WallPath {
         if (this.points.length > 10 && roll < this.points.length * 2)
             this.active = false;
 
+
+
+
     }
 
     getBranchCheckPoint()
@@ -177,12 +180,12 @@ class WallPath {
 
     }
 
-    getCheckPoint()
+    getCheckPoint(dir)
     {
         let checkX = this.points[this.points.length - 1].x;
         let checkY = this.points[this.points.length - 1].y;
 
-        switch (this.direction)
+        switch (dir)
         {
             case 1:
             {

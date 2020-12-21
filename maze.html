@@ -54,30 +54,20 @@
 
         </svg>
 
-        <svg xmlns="http://www.w3.org/2000/svg"
-            xmlns:xlink="http://www.w3.org/1999/xlink"
-            xmlns:ev="http://www.w3.org/2001/sml-events"
-            id="radMazeSVG"
-            viewBox = "0 0 1000 1000">
-            <circle cx="500" cy="500" r="500" fill="#a2a2a2"/>
-            <circle cx="500" cy="500" r="375" fill="#c2d2d2"/>
-            <circle cx="500" cy="500" r="250" fill="#afafa9"/>
-            <circle cx="500" cy="500" r="125" fill="#cfdfd9"/>
-
-            <line x1="500" y1="500" x2="1000" y2="500" stroke="black" stroke-width="5"/>
-            <line x1="500" y1="500" x2="0" y2="500" stroke="black" stroke-width="5"/>
-            <line x1="500" y1="500" x2="500" y2="0" stroke="black" stroke-width="5"/>
-            <line x1="500" y1="500" x2="500" y2="1000" stroke="black" stroke-width="5"/>
-
-
-        </svg>
-
         <div id="maze-info">
             <button class="w3-button w3-khaki w3-round-large" id="button_generate">Generate</button>
+            <select class="w3-select w3-border" name="complex-select" id="complexity-select">
+                <option value=0 disabled selected>Choose difficulty</option>
+                <option value=5>1</option>
+                <option value=10>2</option>
+                <option value=15>3</option>
+                <option value=20>4</option>
+                <option value=25>5</option>
+            </select>
             <button class="w3-button w3-green w3-round-large" id="button_solve" disabled="true">Solve</button>
             <button class="w3-button w3-blue w3-round-large" id="button_solution" disabled="true">Show Solution</button>
             <button class="w3-button w3-red w3-round-large" id="button_race" disabled="true">Race</button>
-            <button class="w3-button w3-purple w3-round-large" id="button_convert" disabled="true">Convert</button>
+            <!--<button class="w3-button w3-purple w3-round-large" id="button_convert" disabled="true">Convert</button> -->
             <button class="w3-button w3-black w3-round-large" id="button_save" disabled="true">Save Image</button>
             
         </div>
