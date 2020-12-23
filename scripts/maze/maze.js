@@ -12,11 +12,14 @@ function generate()
     document.getElementById("button_solution").removeAttribute("disabled");
     document.getElementById("button_race").removeAttribute("disabled");
     document.getElementById("button_save").removeAttribute("disabled");
+    document.getElementById("button_grid").removeAttribute("disabled");
 
     document.getElementById("button_solve").addEventListener("click", playerSolve);
     // document.getElementById("button_solution").addEventListener("click", computerSolve);
     // document.getElementById("button_race").addEventListener("click", race);
     // document.getElementById("button_save").addEventListener("click", save);
+    document.getElementById("button_grid").addEventListener("click", showGrid);
+    document.getElementById("button_grid").innerHTML = "Show Grid";
 
 }
 
@@ -154,22 +157,6 @@ function mouse(event)
 
 }
 
-function drawHorizontal(x, y, length, thickness, color)
-{
-    let el = document.createElementNS("http:///www.w3.org/2000/svg", "rect");
-    let svg = document.getElementById("mazeSVG");
-
-    el.setAttribute("x", x);
-    el.setAttribute("y", y);
-    el.setAttribute("width", length);
-    el.setAttribute("height", thickness);
-    el.setAttribute("fill", color.getCode());
-    el.setAttribute("rx", 10);
-
-    svg.appendChild(el);
-
-}
-
 function drawPlayer()
 {
     let el = document.createElementNS(namespace, "polyline");
@@ -228,10 +215,17 @@ function pointEquals(p1, p2)
     return (p1.x == p2.x && p1.y == p2.y);
 }
 
+function showGrid()
+{
+    if (newMaze != null)
+        newMaze.paintGrid();
+}
+
 
 
 window.onload = function()
 {
     console.log("Maze window loaded!");
     document.getElementById("button_generate").addEventListener("click", generate);
+    
 }

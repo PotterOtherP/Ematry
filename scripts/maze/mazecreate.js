@@ -1,8 +1,8 @@
 const COMPLEXITY_DEFAULT = 5;
 const COMPLEXITY_MIN = 3;
-const COMPLEXITY_MAX = 60;
-const MAX_ITERATIONS = 500;
-const SVG_WIDTH = 1200;
+const COMPLEXITY_MAX = 61;
+const MAX_ITERATIONS = 5000;
+const SVG_WIDTH = 1204;
 const SVG_HEIGHT = 900;
 const BRANCH_PERCENT = 10;
 const CH_WALL = 'X';
@@ -14,11 +14,13 @@ class Maze {
     constructor(comp)
     {
         this.complexity = (comp >= COMPLEXITY_MIN && comp <= COMPLEXITY_MAX) ? comp : COMPLEXITY_DEFAULT;
+        if (this.complexity % 2 == 0) ++this.complexity;
+
         this.mazeGrid = [];
         this.paths = [];
         this.branches = [];
         this.rows = this.complexity * 3;
-        this.columns = this.complexity * 4;
+        this.columns = (this.complexity * 4) + 1;
         this.columnPixels = SVG_WIDTH / this.columns;
         this.rowPixels = SVG_HEIGHT / this.rows;
         this.wall_left = 0;
@@ -26,9 +28,14 @@ class Maze {
         this.wall_right = this.columns - 1;
         this.wall_bottom = this.rows - 1;
         this.while_control = 0;
+        this.grid_visible = false;
 
         this.startPoint = {x: 0, y: 0};
         this.exitPoint = {x: 0, y: 0};
+        this.startX = 0;
+        this.startY = 0;
+        this.exitX = 0;
+        this.exitY = 0;
 
         this.wallColor = null;
         this.spaceColor = null;
@@ -51,25 +58,47 @@ class Maze {
         this.addBottomWallPaths();
         this.addLeftWallPaths();
         this.addRightWallPaths();
-        // this.addRandomInteriorPaths(this.complexity);
 
-        // // Grow main paths
-        for (let i = 0; i < MAX_ITERATIONS; ++i)
+        while (this.pathsActive())
         {
+            if (this.while_control > MAX_ITERATIONS)
+            {
+                console.log("Max iterations reached: wall paths")
+                break;
+            }
+            ++this.while_control;
+
             this.growPaths();
         }
 
-        // Fill in little gaps
-        // this.while_control = 0;
-        // while (!this.isComplete())
-        // {
-        //     this.growPaths();
-        //     ++this.while_control;
-        //     if (this.while_control > 1000)
-        //         break;
-        // }
 
+        while (!this.isComplete())
+        {
+            if (this.while_control > MAX_ITERATIONS)
+            {
+                console.log("Max iterations reached: branches")
+                break;
+            }
+            ++this.while_control;
 
+            for (let path of this.paths)
+            {
+                if (path.points.length <= 2) continue;
+
+                let pt = path.branch();
+                if (this.pathIsClear(pt.getBranchCheckPoint(), pt.direction))
+                    this.paths.push(pt);
+            }
+
+            while (this.pathsActive())
+            {
+                if (this.while_control > MAX_ITERATIONS)
+                    break;
+                ++this.while_control;
+
+                this.growPaths();
+            }
+        }
 
         this.paintMaze();
 
@@ -81,150 +110,81 @@ class Maze {
         {
             this.paths.push(new WallPath(x, y, d));
             this.mazeGrid[y][x] = CH_WALL;
+
+            return true;
         }
+
+        return false;
 
     }
 
     addTopWallPaths()
     {
-        let pathY = this.wall_top + 1;
-        let xCoords = [];
+        let pathY= this.wall_top + 1;
+        let pathX = getRandom(2) * 2 + 2;
 
-        if (this.startPoint.x >= this.columns / 2)
-            xCoords.push(getRandom(this.startPoint.x - 4) + 2);
-        else
-            xCoords.push(getRandom(this.columns - this.startPoint.x - 2) + this.startPoint.x + 1);
+        if (Math.abs(this.startX - pathX) > 3)
+            this.addPath(pathX, pathY, 2);
 
-        this.addPath(xCoords[0], pathY, 2);
-
-        for (let i = 1; i < this.complexity / 2; ++i)
+        for (let i = pathX; i <= this.wall_right - 2; i += 4)
         {
-            let nextX = xCoords[0];
-            let condition = true;
+            let roll = getRandom(2);
 
-            // This is to make sure the next path is at least 2 grid units away from
-            // any other path and 3 units away from the maze entrance.
-            while (condition)
-            {
-                nextX = getRandom(this.columns - 4) + 2;
-                condition = false;
-
-                for (let j = 0; j < i; ++j)
-                {
-                    if (Math.abs(nextX - xCoords[j]) < 2)
-                        condition = true;
-                }
-
-                if (Math.abs(nextX - this.startPoint.x) < 3)
-                    condition = true;
-            }
-
-            xCoords.push(nextX);
-            this.addPath(nextX, pathY, 2);
+            if (roll == 1 && Math.abs(this.startX - i) > 3)
+                this.addPath(i, pathY, 2);
         }
 
     }
 
     addBottomWallPaths()
     {
+        let pathY= this.wall_bottom - 1;
+        let pathX = getRandom(2) * 2 + 2;
 
-        let pathY = this.wall_bottom - 1;
-        let xCoords = [];
+        if (Math.abs(this.exitX - pathX) > 3)
+            this.addPath(pathX, pathY, 1);
 
-        if (this.exitPoint.x >= this.columns / 2)
-            xCoords.push(getRandom(this.exitPoint.x - 4) + 2);
-        else
-            xCoords.push(getRandom(this.columns - this.exitPoint.x - 2) + this.exitPoint.x + 1);
-
-        this.addPath(xCoords[0], pathY, 1);
-
-        for (let i = 1; i < this.complexity / 2; ++i)
+        for (let i = pathX; i <= this.wall_right - 2; i += 4)
         {
-            let nextX = xCoords[0];
-            let condition = true;
+            let roll = getRandom(2);
 
-            // This is to make sure the next path is at least 2 grid units away from
-            // any other path and 3 units away from the maze exit.
-            while (condition)
-            {
-                nextX = getRandom(this.columns - 4) + 2;
-                condition = false;
-
-                for (let j = 0; j < i; ++j)
-                {
-                    if (Math.abs(nextX - xCoords[j]) < 2)
-                        condition = true;
-                }
-
-                if (Math.abs(nextX - this.exitPoint.x) < 3)
-                    condition = true;
-            }
-
-            xCoords.push(nextX);
-            this.addPath(nextX, pathY, 1);
+            if (roll == 1 && Math.abs(this.exitX - i) > 3)
+                this.addPath(i, pathY, 1);
         }
 
     }
 
     addLeftWallPaths()
     {
-        let pathX = this.wall_left + 1;
-        let yCoords = [];
+         let pathX = this.wall_left + 1;
+         let pathY = getRandom(2) * 2 + 4;
 
-        yCoords.push(getRandom(this.rows - 4) + 2);
-        this.addPath(pathX, yCoords[0], 4);
+         this.addPath(pathX, pathY, 4);
 
-        for (let i = 1; i < this.complexity / 2; ++i)
-        {
-            let nextY = yCoords[0];
-            let condition = true;
+         for (let i = pathY; i <= this.wall_bottom - 3; i += 4)
+         {
+            let roll = getRandom(2);
 
-            while (condition)
-            {
-                nextY = getRandom(this.rows - 4) + 2;
-                condition = false;
-
-                for (let j = 0; j < i; ++j)
-                {
-                    if (Math.abs(nextY - yCoords[j]) < 2)
-                        condition = true;
-                }
-            }
-
-            yCoords.push(nextY);
-            this.addPath(pathX, nextY, 4);
-        }
+            if (roll == 1)
+                this.addPath(pathX, i, 4);
+         }
 
     }
 
     addRightWallPaths()
     {
-        let pathX = this.wall_right - 1;
-        let yCoords = [];
+         let pathX = this.wall_right - 1;
+         let pathY = getRandom(2) * 2 + 4;
 
-        yCoords.push(getRandom(this.rows - 4) + 2);
-        this.addPath(pathX, yCoords[0], 3);
+         this.addPath(pathX, pathY, 3);
 
-        for (let i = 1; i < this.complexity / 2; ++i)
-        {
-            let nextY = yCoords[0];
-            let condition = true;
+         for (let i = pathY; i <= this.wall_bottom - 3; i += 4)
+         {
+            let roll = getRandom(2);
 
-            while (condition)
-            {
-                nextY = getRandom(this.rows - 4) + 2;
-                condition = false;
-
-                for (let j = 0; j < i; ++j)
-                {
-                    if (Math.abs(nextY - yCoords[j]) < 2)
-                        condition = true;
-                }
-            }
-
-            yCoords.push(nextY);
-            this.addPath(pathX, nextY, 3);
-        }
+            if (roll == 1)
+                this.addPath(pathX, i, 3);
+         }
 
     }
 
@@ -249,6 +209,60 @@ class Maze {
             }
         }
 
+    }
+
+    checkSpacing(path)
+    {
+        let x = path.points[path.points.length - 1].x;
+        let y = path.points[path.points.length - 1].y;
+        let len = 1;
+
+        switch (path.direction)
+        {
+            case 1:
+            {
+                --y;
+                while (y >= this.wall_top && this.mazeGrid[y][x] == CH_SPACE)
+                {
+                    ++len;
+                    --y;
+                }
+            } break;
+
+            case 2:
+            {
+                ++y;
+                while (y <= this.wall_bottom && this.mazeGrid[y][x] == CH_SPACE)
+                {
+                    ++len;
+                    ++y;
+                }
+            } break;
+
+            case 3:
+            {
+                --x;
+                while (x >= this.wall_left && this.mazeGrid[y][x] == CH_SPACE)
+                {
+                    ++len;
+                    --x;
+                }
+            } break;
+
+            case 4:
+            {
+                ++x;
+                while (x <= this.wall_right && this.mazeGrid[y][x] == CH_SPACE)
+                {
+                    ++len;
+                    ++x;
+                }
+            } break;
+
+            default: {} break;
+        }
+
+        return (len % 2 == 0);
     }
 
     drawHorizontal(x, y, length, thickness, color)
@@ -287,10 +301,18 @@ class Maze {
     {
         for (let path of this.paths)
         {
-            let roll = getRandom(100);
+            if (!path.active) continue;
 
-            if (roll <= 75 && path.active &&
-                this.pathIsClear(path.getCheckPoint(path.direction), path.direction))
+            if (!this.pathIsClear(path.getCheckPoint(path.direction), path.direction))
+            {
+                if (!path.changeDirection())
+                {
+                    path.active = false;
+                    continue;
+                }
+            }
+
+            else if (getRandom(100) < 80)
             {
                 path.grow();
             }
@@ -308,25 +330,11 @@ class Maze {
                     path.active = true;
             }
 
-            if (!path.active && roll <= BRANCH_PERCENT)
-            {
-                // this.branches.push(path.branch());
-            }
-
-            // update the grid letters
             for (let pt of path.points)
             {
                 this.mazeGrid[pt.y][pt.x] = CH_WALL;
             }
         }
-
-        for (let branch of this.branches)
-        {
-            if (pathIsClear(branch.getBranchCheckPoint(), branch.direction))
-                this.paths.push(branch);
-        }
-
-        this.branches = [];
 
     }
 
@@ -350,11 +358,20 @@ class Maze {
             }
         }
 
-        let startX = getRandom(this.columns - 6) + 3;
-        let exitX = getRandom(this.columns - 6) + 3;
+        let startX = getRandom((this.columns - 6) / 2) * 2 + 3;
+        let exitX = getRandom((this.columns - 6) / 2) * 2 + 3;
 
-        this.mazeGrid[this.wall_top][startX] = 'S';
-        this.mazeGrid[this.wall_bottom][exitX] = 'E';
+        if (startX > this.columns / 2)
+            startX = startX - Math.floor(this.columns / 2);
+
+        if (exitX < this.columns / 2)
+            exitX = exitX + Math.floor(this.columns / 2);
+
+        console.log("Start X: " + startX);
+        console.log("Exit X: " + exitX);
+
+        this.mazeGrid[this.wall_top][startX] = CH_SPACE;
+        this.mazeGrid[this.wall_bottom][exitX] = CH_SPACE;
 
         this.startPoint = {x: startX, y: this.wall_top};
         this.exitPoint = {x: exitX, y: this.wall_bottom};
@@ -363,6 +380,11 @@ class Maze {
         this.addPath(this.startPoint.x + 1, this.startPoint.y + 1, 2);
         this.addPath(this.exitPoint.x - 1, this.exitPoint.y - 1, 1);
         this.addPath(this.exitPoint.x + 1, this.exitPoint.y - 1, 1);
+
+        this.startX = this.startPoint.x;
+        this.startY = this.startPoint.y;
+        this.exitX = this.exitPoint.x;
+        this.exitY = this.exitPoint.y;
 
     }
 
@@ -382,18 +404,6 @@ class Maze {
                     this.mazeGrid[i + 1][j + 1] == CH_SPACE &&
                     this.mazeGrid[i + 1][j - 1] == CH_SPACE)
                 {
-                    let roll = getRandom(2);
-
-                    if (roll == 0 && this.mazeGrid[i - 1][j] == CH_WALL)
-                    {
-                        this.addPath(j, i, 2);
-                    }
-
-                    else if (roll == 1 && this.mazeGrid[i + 2][j] == CH_WALL)
-                    {
-                        this.addPath(j, i + 1, 1);
-                    }
-
                     result = false;
                 }
             }
@@ -411,18 +421,6 @@ class Maze {
                     this.mazeGrid[i + 1][j] == CH_SPACE &&
                     this.mazeGrid[i + 1][j + 1] == CH_SPACE)
                 {
-                    let roll = getRandom(2);
-
-                    if (roll == 0 && this.mazeGrid[i - 1][j] == CH_WALL)
-                    {
-                        this.addPath(j, i, 3);
-                    }
-
-                    else if (roll == 1 && this.mazeGrid[i + 2][j] == CH_WALL)
-                    {
-                        this.addPath(j + 1, i, 4);
-                    }
-
                     result = false;
                 }
             }
@@ -448,6 +446,72 @@ class Maze {
 
         svg.appendChild(el);
 
+        el = document.createElementNS(SVG_NAMESPACE, "span");
+        el.setAttribute("id", "gridLines");
+        svg.appendChild(el);
+
+    }
+
+    paintGrid()
+    {
+        let svg = document.getElementById("mazeSVG");
+
+        if (this.grid_visible)
+        {
+            let lines = document.getElementsByClassName("grid-line");
+
+            while (lines.length > 0)
+            {
+                svg.removeChild(lines[0]);
+            }
+
+            // for (let line of lines)
+            // {
+            //     console.log("Got a line here...");
+            //     svg.removeChild(line);
+            // }
+
+            this.grid_visible = false;
+            document.getElementById("button_grid").innerHTML = "Show Grid";
+        }
+
+        else
+        {
+            let marker = document.getElementById("gridLines");
+            let el = null;
+
+            for (let i = 0; i <= this.rows; ++i)
+            {
+                el = document.createElementNS(SVG_NAMESPACE, "line");
+
+                el.setAttribute("x1", 0);
+                el.setAttribute("x2", SVG_WIDTH);
+                el.setAttribute("y1", i * this.rowPixels);
+                el.setAttribute("y2", i * this.rowPixels);
+                el.setAttribute("stroke", "black");
+                el.setAttribute("class", "grid-line");
+
+                svg.insertBefore(el, marker);
+            }
+
+            for (let j = 0; j <= this.columns; ++j)
+            {
+                el = document.createElementNS(SVG_NAMESPACE, "line");
+
+                el.setAttribute("x1", j * this.columnPixels);
+                el.setAttribute("x2", j * this.columnPixels);
+                el.setAttribute("y1", 0);
+                el.setAttribute("y2", SVG_HEIGHT);
+                el.setAttribute("stroke", "black");
+                el.setAttribute("class", "grid-line");
+
+                svg.insertBefore(el, marker);
+            }
+
+            this.grid_visible = true;
+            document.getElementById("button_grid").innerHTML = "Hide Grid";
+
+        }
 
     }
 
@@ -593,6 +657,17 @@ class Maze {
             
         return true;
 
+    }
+
+    pathsActive()
+    {
+        for (let path of this.paths)
+        {
+            if (path.active)
+                return true;
+        }
+
+        return false;
     }
 
     randomizeColors()

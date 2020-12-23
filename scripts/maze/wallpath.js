@@ -20,10 +20,19 @@ class WallPath {
 
     branch()
     {
+        if (this.points.length < 3) return null;
+
         let index = getRandom(this.points.length - 2) + 1;
 
         let nx = this.points[index].x;
         let ny = this.points[index].y;
+
+        while (nx % 2 == 1 || ny % 2 == 1)
+        {
+            index = getRandom(this.points.length - 2) + 1;
+            nx = this.points[index].x;
+            ny = this.points[index].y;
+        }
 
         let dirNew = 1;
 
@@ -114,6 +123,9 @@ class WallPath {
 
     changeDirection()
     {
+        if (this.getX() % 2 == 1 || this.getY() % 2 == 1)
+            return false;
+
         let roll = getRandom(2);
 
         switch (this.direction)
@@ -134,19 +146,10 @@ class WallPath {
 
         }
 
-    }
-
-    checkActive()
-    {
-        let roll = getRandom(100) + 1;
-
-        if (this.points.length > 10 && roll < this.points.length * 2)
-            this.active = false;
-
-
-
+        return true;
 
     }
+
 
     getBranchCheckPoint()
     {
@@ -182,8 +185,8 @@ class WallPath {
 
     getCheckPoint(dir)
     {
-        let checkX = this.points[this.points.length - 1].x;
-        let checkY = this.points[this.points.length - 1].y;
+        let checkX = this.getX();
+        let checkY = this.getY();
 
         switch (dir)
         {
@@ -212,10 +215,20 @@ class WallPath {
 
     }
 
+    getX()
+    {
+        return this.points[this.points.length - 1].x;
+    }
+
+    getY()
+    {
+        return this.points[this.points.length - 1].y;
+    }
+
     grow()
     {
-        let newX = this.points[this.points.length - 1].x;
-        let newY = this.points[this.points.length - 1].y;
+        let newX = this.getX();
+        let newY = this.getY();
 
         switch (this.direction)
         {
