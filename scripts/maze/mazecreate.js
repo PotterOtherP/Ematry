@@ -1,7 +1,7 @@
 const COMPLEXITY_DEFAULT = 5;
 const COMPLEXITY_MIN = 3;
 const COMPLEXITY_MAX = 61;
-const MAX_ITERATIONS = 5000;
+const MAX_ITERATIONS = 50000;
 const SVG_WIDTH = 1204;
 const SVG_HEIGHT = 900;
 const BRANCH_PERCENT = 10;
@@ -100,6 +100,8 @@ class Maze {
             }
         }
 
+        // console.log("Branch iterations to finish: " + this.while_control);
+
         this.paintMaze();
 
     }
@@ -111,10 +113,7 @@ class Maze {
             this.paths.push(new WallPath(x, y, d));
             this.mazeGrid[y][x] = CH_WALL;
 
-            return true;
         }
-
-        return false;
 
     }
 
@@ -211,60 +210,6 @@ class Maze {
 
     }
 
-    checkSpacing(path)
-    {
-        let x = path.points[path.points.length - 1].x;
-        let y = path.points[path.points.length - 1].y;
-        let len = 1;
-
-        switch (path.direction)
-        {
-            case 1:
-            {
-                --y;
-                while (y >= this.wall_top && this.mazeGrid[y][x] == CH_SPACE)
-                {
-                    ++len;
-                    --y;
-                }
-            } break;
-
-            case 2:
-            {
-                ++y;
-                while (y <= this.wall_bottom && this.mazeGrid[y][x] == CH_SPACE)
-                {
-                    ++len;
-                    ++y;
-                }
-            } break;
-
-            case 3:
-            {
-                --x;
-                while (x >= this.wall_left && this.mazeGrid[y][x] == CH_SPACE)
-                {
-                    ++len;
-                    --x;
-                }
-            } break;
-
-            case 4:
-            {
-                ++x;
-                while (x <= this.wall_right && this.mazeGrid[y][x] == CH_SPACE)
-                {
-                    ++len;
-                    ++x;
-                }
-            } break;
-
-            default: {} break;
-        }
-
-        return (len % 2 == 0);
-    }
-
     drawHorizontal(x, y, length, thickness, color)
     {
         let el = document.createElementNS(SVG_NAMESPACE, "rect");
@@ -312,7 +257,7 @@ class Maze {
                 }
             }
 
-            else if (getRandom(100) < 80)
+            else if (getRandom(100) < 60)
             {
                 path.grow();
             }
@@ -366,9 +311,6 @@ class Maze {
 
         if (exitX < this.columns / 2)
             exitX = exitX + Math.floor(this.columns / 2);
-
-        console.log("Start X: " + startX);
-        console.log("Exit X: " + exitX);
 
         this.mazeGrid[this.wall_top][startX] = CH_SPACE;
         this.mazeGrid[this.wall_bottom][exitX] = CH_SPACE;
@@ -668,6 +610,7 @@ class Maze {
         }
 
         return false;
+
     }
 
     randomizeColors()

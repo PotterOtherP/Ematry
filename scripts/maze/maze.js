@@ -4,7 +4,7 @@ let newMaze = null;
 
 function generate()
 {
-    console.log("Generate function!");
+    // console.log("Generate function!");
 
     newMaze = new Maze(document.getElementById("complexity-select").value);
 
@@ -30,7 +30,7 @@ function getRandom(int)
 
 function playerSolve()
 {
-    player = new WallPath(startPoint.x, startPoint.y, 2);
+    player = new WallPath(newMaze.startX, newMaze.startY);
     playerColor = new ColorRGB(255, 20, 147);
     playerTipColor = new ColorRGB(0, 255, 255);
     player.grow();
@@ -48,7 +48,7 @@ function keyDown(event)
     let checkX = player.points[player.points.length - 1].x;
     let checkY = player.points[player.points.length - 1].y;
 
-    if (checkX == exitPoint.x && checkY == exitPoint.y)
+    if (checkX == newMaze.exitX && checkY == newMaze.exitY)
     {
         console.log("Maze solved!");
         window.removeEventListener("keydown", keyDown, true);
@@ -88,6 +88,8 @@ function keyDown(event)
         default: {} break;
     }
 
+    if (checkX < 0 || checkY < 0) return;
+
     if (player.points.length > 2 &&
         (checkX == player.points[player.points.length - 2].x &&
         checkY == player.points[player.points.length - 2].y) )
@@ -95,9 +97,7 @@ function keyDown(event)
         player.points.pop();
     }
 
-
-
-    else if (player.direction > 0 && mazeGrid[checkY][checkX] !== CH_WALL)
+    else if (player.direction > 0 && newMaze.mazeGrid[checkY][checkX] !== CH_WALL)
         player.grow();
 
     drawPlayer();
@@ -159,9 +159,9 @@ function mouse(event)
 
 function drawPlayer()
 {
-    let el = document.createElementNS(namespace, "polyline");
-    let el_tip1 = document.createElementNS(namespace, "circle");
-    let el_tip2 = document.createElementNS(namespace, "circle");
+    let el = document.createElementNS(SVG_NAMESPACE, "polyline");
+    let el_tip1 = document.createElementNS(SVG_NAMESPACE, "circle");
+    let el_tip2 = document.createElementNS(SVG_NAMESPACE, "circle");
     let svg = document.getElementById("mazeSVG");
     
     let elPrevious = document.getElementById("playerPL");
@@ -177,33 +177,33 @@ function drawPlayer()
 
     for (let pt of player.points)
     {
-        let px = columnPixels * (pt.x + 1 / 2);
-        let py = rowPixels * (pt.y + 1 / 2);
+        let px = newMaze.columnPixels * (pt.x + 1 / 2);
+        let py = newMaze.rowPixels * (pt.y + 1 / 2);
         pointsStr += (px + "," + py + " ");
     }
 
     el.setAttribute("points", pointsStr);
     el.setAttribute("fill", "none");
     el.setAttribute("stroke", playerColor.getCode());
-    el.setAttribute("stroke-width", columnPixels);
+    el.setAttribute("stroke-width", newMaze.columnPixels);
     el.setAttribute("id", "playerPL");
     svg.appendChild(el);
 
-    let t1_x = columnPixels * (player.points[0].x + 1 / 2);
-    let t1_y = rowPixels * (player.points[0].y + 1 / 2);
+    let t1_x = newMaze.columnPixels * (player.points[0].x + 1 / 2);
+    let t1_y = newMaze.rowPixels * (player.points[0].y + 1 / 2);
     el_tip1.setAttribute("cx", t1_x);
     el_tip1.setAttribute("cy", t1_y);
-    el_tip1.setAttribute("r", columnPixels / 2);
+    el_tip1.setAttribute("r", newMaze.columnPixels / 2);
     el_tip1.setAttribute("fill", playerColor.getCode());
     el_tip1.setAttribute("id", "player_t1");
     svg.appendChild(el_tip1);
 
 
-    let t2_x = columnPixels * (player.points[player.points.length - 1].x + 1 / 2);
-    let t2_y = rowPixels * (player.points[player.points.length - 1].y + 1 / 2);
+    let t2_x = newMaze.columnPixels * (player.points[player.points.length - 1].x + 1 / 2);
+    let t2_y = newMaze.rowPixels * (player.points[player.points.length - 1].y + 1 / 2);
     el_tip2.setAttribute("cx", t2_x);
     el_tip2.setAttribute("cy", t2_y);
-    el_tip2.setAttribute("r", columnPixels / 2);
+    el_tip2.setAttribute("r", newMaze.columnPixels / 2);
     el_tip2.setAttribute("fill", playerTipColor.getCode());
     el_tip2.setAttribute("id", "player_t2");
     svg.appendChild(el_tip2);
