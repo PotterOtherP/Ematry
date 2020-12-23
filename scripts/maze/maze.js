@@ -1,6 +1,7 @@
 const SVG_NAMESPACE = "http://www.w3.org/2000/svg";
 
 let newMaze = null;
+let solution = null;
 
 function generate()
 {
@@ -10,12 +11,12 @@ function generate()
 
     document.getElementById("button_solve").removeAttribute("disabled");
     document.getElementById("button_solution").removeAttribute("disabled");
-    document.getElementById("button_race").removeAttribute("disabled");
-    document.getElementById("button_save").removeAttribute("disabled");
+    // document.getElementById("button_race").removeAttribute("disabled");
+    // document.getElementById("button_save").removeAttribute("disabled");
     document.getElementById("button_grid").removeAttribute("disabled");
 
     document.getElementById("button_solve").addEventListener("click", playerSolve);
-    // document.getElementById("button_solution").addEventListener("click", computerSolve);
+    document.getElementById("button_solution").addEventListener("click", computerSolve);
     // document.getElementById("button_race").addEventListener("click", race);
     // document.getElementById("button_save").addEventListener("click", save);
     document.getElementById("button_grid").addEventListener("click", showGrid);
@@ -26,6 +27,14 @@ function generate()
 function getRandom(int)
 {
     return Math.floor(Math.random() * int);
+}
+
+function computerSolve()
+{
+    console.log("Computer solution...");
+
+    solution = new Solver(newMaze, new ColorRGB(10, 10, 210));
+    // solution.draw();
 }
 
 function playerSolve()
@@ -44,6 +53,8 @@ function playerSolve()
 
 function keyDown(event)
 {
+    event.preventDefault();
+
     player.direction = 0;
     let checkX = player.points[player.points.length - 1].x;
     let checkY = player.points[player.points.length - 1].y;
