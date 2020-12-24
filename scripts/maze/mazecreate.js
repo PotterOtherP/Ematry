@@ -625,6 +625,7 @@ class Maze {
 
         this.wallColor = new ColorRGB(wallRed, wallGreen, wallBlue);
         this.spaceColor = new ColorRGB(spaceRed, spaceGreen, spaceBlue);
+        // this.spaceColor = new ColorRGB(255, 255, 255);
 
     }
 

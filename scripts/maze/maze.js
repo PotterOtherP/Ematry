@@ -50,11 +50,15 @@ function computerSolve()
 {
     console.log("Computer solution...");
 
+    
+
     if (!solutionVisible)
     {
-        solution = new Solver(newMaze, new ColorRGB(10, 10, 210));
+        solution = new Solver(newMaze, 1);
         solution.solveMaze();
         solution.draw();
+
+
         solutionVisible = true;
         document.getElementById("button_solution").innerHTML = "Hide Solution"; 
     }
@@ -83,10 +87,18 @@ function playerSolve()
 
     // window.addEventListener("mousemove", mouse, true);
     window.addEventListener("keydown", keyDown, true);
+    document.getElementById("mazeSVG").addEventListener("touchmove", touch, false);
 
     drawPlayer();
 
 }
+
+function touch(event)
+{
+    event.preventDefault();
+}
+
+
 
 function keyDown(event)
 {
@@ -99,6 +111,7 @@ function keyDown(event)
     if (checkX == newMaze.exitX && checkY == newMaze.exitY)
     {
         console.log("Maze solved!");
+        setText("Great job, you solved the maze!");
         window.removeEventListener("keydown", keyDown, true);
         return;
     }

@@ -43,34 +43,39 @@
 
     <div class="w3-container w3-leftbar w3-topbar w3-border-black" id="gameArena">
 
-        <div id="maze-main-column">
 
-        <div id="maze-text">Welcome to the maze game! Click on the arena below or "Generate New" to create a new maze.</div>
 
         <svg xmlns="http://www.w3.org/2000/svg"
             xmlns:xlink="http://www.w3.org/1999/xlink"
             xmlns:ev="http://www.w3.org/2001/sml-events"
             id="mazeSVG"
             viewBox = "0 0 1204 900">
-            <rect x="0" y="0" width="600" height="450" fill="#cfdfd9"/>
-            <rect x="600" y="0" width="600" height="450" fill="#afafa9"/>
-            <rect x="0" y="450" width="600" height="450" fill="#c2d2d2"/>
-            <rect x="600" y="450" width="600" height="450" fill="#a2a2a2"/>
+            <rect x="0" y="0" width="602" height="450" fill="#cfdfd9"/>
+            <rect x="602" y="0" width="602" height="450" fill="#afafa9"/>
+            <rect x="0" y="450" width="602" height="450" fill="#c2d2d2"/>
+            <rect x="602" y="450" width="602" height="450" fill="#a2a2a2"/>
+
+            <rect x="0" y="0" width="1204" height="900" fill="#cfdfd9"/>
+
+
+            <line x1="0" y1="0" x2="0" y2="900" stroke="black" stroke-width="12"/>
+            <line x1="1204" y1="0" x2="1204" y2="900" stroke="black" stroke-width="12"/>
+            <line x1="0" y1="0" x2="1204" y2="0" stroke="black" stroke-width="6"/>
+            <line x1="0" y1="900" x2="1204" y2="900" stroke="black" stroke-width="6"/>
 
         </svg>
 
 
-        </div>
-
         <div id="maze-info">
+        <div id="maze-text">Welcome to the maze game! Click on the arena or "Generate New" to create a new maze.</div>
             <select class="w3-select w3-border" name="complex-select" id="complexity-select" style="margin-bottom: 10px">
-                <option value=0 disabled selected>Choose difficulty</option>
-                <option value=5 id="lvl1">1</option>
-                <option value=9 id="lvl2">2</option>
-                <option value=17 id="lvl3">3</option>
-                <option value=27 id="lvl4">4</option>
-                <option value=35 id="lvl5">5</option>
-                <option value=61 id="lvl6">6</option>
+                <option value=0 disabled selected>Choose difficulty level</option>
+                <option value=5 id="lvl1">Level 1</option>
+                <option value=9 id="lvl2">Level 2</option>
+                <option value=17 id="lvl3">Level 3</option>
+                <option value=27 id="lvl4">Level 4</option>
+                <option value=35 id="lvl5">Level 5</option>
+                <option value=61 id="lvl6">Level 6</option>
             </select>
 
             <button class="w3-button w3-khaki w3-round-large" id="button_generate">Generate New</button>
