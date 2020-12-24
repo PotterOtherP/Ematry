@@ -1,13 +1,20 @@
+#maze-main-column {
+    display: flex;
+    flex-direction: column;
+    height: 90vh;
+}
+
+#maze-text {
+    margin: 5%;
+    text-align: center;
+}
+
 svg {
     display: block;
     margin: 5%;
     height: 80vh;
-    min-width: 400px;
-    min-height: 300px;
-}
-
-#mazeSVG {
-    display: block;
+    min-width: 301px;
+    min-height: 225px;
 }
 
 
@@ -19,6 +26,8 @@ svg {
     height: 80vh;
     margin: 5%;
 }
+
+
 
 button {
     margin-bottom: 10px;
@@ -38,9 +47,17 @@ button {
         height: auto;
     }
 
+    #maze-text {
+        display: none;
+    }
+
     svg {
         width: 100%;
-        margin: 0;
+        margin: 5vh;
         height: 100vh;
+    }
+
+    #lvl5, #lvl6 {
+        display: none;
     }
 }

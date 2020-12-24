@@ -2,25 +2,42 @@ const SVG_NAMESPACE = "http://www.w3.org/2000/svg";
 
 let newMaze = null;
 let solution = null;
+let solutionVisible = false;
+let player = null;
 
 function generate()
 {
     // console.log("Generate function!");
+    setText("Click on Generate New to create a new maze!");
 
     newMaze = new Maze(document.getElementById("complexity-select").value);
+
+    document.getElementById("mazeSVG").removeEventListener("click", generate);
+
+    if (player != null)
+    {
+        console.log("Removing player solution");
+        window.removeEventListener("keydown", keyDown, true);
+        player = null;
+        drawPlayer();
+
+    }
+
+    if (solutionVisible)
+        computerSolve();
 
     document.getElementById("button_solve").removeAttribute("disabled");
     document.getElementById("button_solution").removeAttribute("disabled");
     // document.getElementById("button_race").removeAttribute("disabled");
     // document.getElementById("button_save").removeAttribute("disabled");
-    document.getElementById("button_grid").removeAttribute("disabled");
+    // document.getElementById("button_grid").removeAttribute("disabled");
 
     document.getElementById("button_solve").addEventListener("click", playerSolve);
     document.getElementById("button_solution").addEventListener("click", computerSolve);
     // document.getElementById("button_race").addEventListener("click", race);
     // document.getElementById("button_save").addEventListener("click", save);
-    document.getElementById("button_grid").addEventListener("click", showGrid);
-    document.getElementById("button_grid").innerHTML = "Show Grid";
+    // document.getElementById("button_grid").addEventListener("click", showGrid);
+    // document.getElementById("button_grid").innerHTML = "Show Grid";
 
 }
 
@@ -33,12 +50,32 @@ function computerSolve()
 {
     console.log("Computer solution...");
 
-    solution = new Solver(newMaze, new ColorRGB(10, 10, 210));
-    // solution.draw();
+    if (!solutionVisible)
+    {
+        solution = new Solver(newMaze, new ColorRGB(10, 10, 210));
+        solution.solveMaze();
+        solution.draw();
+        solutionVisible = true;
+        document.getElementById("button_solution").innerHTML = "Hide Solution"; 
+    }
+
+    else
+    {
+        solution.hide();
+        solutionVisible = false;
+        document.getElementById("button_solution").innerHTML = "Show Solution"; 
+    }
+
+}
+
+function setText(str)
+{
+    document.getElementById("maze-text").innerText = str;
 }
 
 function playerSolve()
 {
+    setText("Use arrow keys to solve the maze.");
     player = new WallPath(newMaze.startX, newMaze.startY);
     playerColor = new ColorRGB(255, 20, 147);
     playerTipColor = new ColorRGB(0, 255, 255);
@@ -183,6 +220,8 @@ function drawPlayer()
     if (elPrevious_t1 != null) svg.removeChild(elPrevious_t1);
     if (elPrevious_t2 != null) svg.removeChild(elPrevious_t2);
 
+    if (player == null) return;
+
 
     let pointsStr = "";
 
@@ -238,5 +277,6 @@ window.onload = function()
 {
     console.log("Maze window loaded!");
     document.getElementById("button_generate").addEventListener("click", generate);
+    document.getElementById("mazeSVG").addEventListener("click", generate);
     
 }

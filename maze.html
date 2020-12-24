@@ -43,6 +43,9 @@
 
     <div class="w3-container w3-leftbar w3-topbar w3-border-black" id="gameArena">
 
+        <div id="maze-main-column">
+
+        <div id="maze-text">Welcome to the maze game! Click on the arena below or "Generate New" to create a new maze.</div>
 
         <svg xmlns="http://www.w3.org/2000/svg"
             xmlns:xlink="http://www.w3.org/1999/xlink"
@@ -56,23 +59,27 @@
 
         </svg>
 
+
+        </div>
+
         <div id="maze-info">
-            <button class="w3-button w3-khaki w3-round-large" id="button_generate">Generate</button>
             <select class="w3-select w3-border" name="complex-select" id="complexity-select" style="margin-bottom: 10px">
                 <option value=0 disabled selected>Choose difficulty</option>
-                <option value=5>1</option>
-                <option value=9>2</option>
-                <option value=17>3</option>
-                <option value=27>4</option>
-                <option value=35>5</option>
-                <option value=61>6</option>
+                <option value=5 id="lvl1">1</option>
+                <option value=9 id="lvl2">2</option>
+                <option value=17 id="lvl3">3</option>
+                <option value=27 id="lvl4">4</option>
+                <option value=35 id="lvl5">5</option>
+                <option value=61 id="lvl6">6</option>
             </select>
-            <button class="w3-button w3-green w3-round-large" id="button_solve" disabled="true">Solve</button>
+
+            <button class="w3-button w3-khaki w3-round-large" id="button_generate">Generate New</button>
+            <button class="w3-button w3-green w3-round-large" id="button_solve" disabled="true">Solve - Player</button>
             <button class="w3-button w3-blue w3-round-large" id="button_solution" disabled="true">Show Solution</button>
             <button class="w3-button w3-red w3-round-large" id="button_race" disabled="true">Race</button>
-            <!--<button class="w3-button w3-purple w3-round-large" id="button_convert" disabled="true">Convert</button> -->
+            <!-- <button class="w3-button w3-purple w3-round-large" id="button_convert" disabled="true">Convert</button> -->
             <button class="w3-button w3-black w3-round-large" id="button_save" disabled="true">Save Image</button>
-            <button class="w3-button w3-brown w3-round-large" id="button_grid" disabled="true">Show Grid</button>
+            <!-- <button class="w3-button w3-brown w3-round-large" id="button_grid" disabled="true">Show Grid</button> -->
             
         </div>
 

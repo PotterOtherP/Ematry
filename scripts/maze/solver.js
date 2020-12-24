@@ -1,5 +1,8 @@
+const MAX_SOLUTION_ITERATIONS = 50000;
+
 class Solver {
-    
+
+
     constructor(maze, color)
     {
         this.color = color;
@@ -18,25 +21,16 @@ class Solver {
             }
         }
 
-        this.solveMaze();
-        this.draw();
-
     }
 
     draw()
     {
         let el = document.createElementNS(SVG_NAMESPACE, "polyline");
-        let el_tip1 = document.createElementNS(SVG_NAMESPACE, "circle");
-        let el_tip2 = document.createElementNS(SVG_NAMESPACE, "circle");
         let svg = document.getElementById("mazeSVG");
         
         let elPrevious = document.getElementById("solverPL");
-        let elPrevious_t1 = document.getElementById("solver_t1");
-        let elPrevious_t2 = document.getElementById("solver_t2");
 
         if (elPrevious != null) svg.removeChild(elPrevious);
-        if (elPrevious_t1 != null) svg.removeChild(elPrevious_t1);
-        if (elPrevious_t2 != null) svg.removeChild(elPrevious_t2);
 
 
         let pointsStr = "";
@@ -53,29 +47,18 @@ class Solver {
         el.setAttribute("stroke", this.color.getCode());
         el.setAttribute("stroke-width", this.maze.columnPixels);
         el.setAttribute("stroke-opacity", 0.5);
+        el.setAttribute("stroke-linecap", "round");
         el.setAttribute("id", "solverPL");
         svg.appendChild(el);
 
-        let t1_x = this.maze.columnPixels * (this.path[0].x + 1 / 2);
-        let t1_y = this.maze.rowPixels * (this.path[0].y + 1 / 2);
-        el_tip1.setAttribute("cx", t1_x);
-        el_tip1.setAttribute("cy", t1_y);
-        el_tip1.setAttribute("r", this.maze.columnPixels / 2);
-        el_tip1.setAttribute("fill", this.color.getCode());
-        el_tip1.setAttribute("fill-opacity", 0.5);
-        el_tip1.setAttribute("id", "solver_t1");
-        svg.appendChild(el_tip1);
+    }
 
+    hide()
+    {
+        let svg = document.getElementById("mazeSVG");        
+        let elPrevious = document.getElementById("solverPL");
 
-        let t2_x = this.maze.columnPixels * (this.getX() + 1 / 2);
-        let t2_y = this.maze.rowPixels * (this.getY() + 1 / 2);
-        el_tip2.setAttribute("cx", t2_x);
-        el_tip2.setAttribute("cy", t2_y);
-        el_tip2.setAttribute("r", this.maze.columnPixels / 2);
-        el_tip2.setAttribute("fill", this.color.getCode());
-        el_tip1.setAttribute("fill-opacity", 0.5);
-        el_tip2.setAttribute("id", "solver_t2");
-        svg.appendChild(el_tip2);
+        if (elPrevious != null) svg.removeChild(elPrevious);
     }
 
     solveMaze()
@@ -84,7 +67,7 @@ class Solver {
 
         while (!this.isSolved())
         {
-            if (while_control > 50000)
+            if (while_control > MAX_SOLUTION_ITERATIONS)
             {
                 console.log("Solver reached maximum iterations.");
                 break;
