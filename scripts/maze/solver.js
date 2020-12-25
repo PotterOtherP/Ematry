@@ -319,6 +319,62 @@ class Solver {
 
     }
 
+    growTip()
+    {
+        let el = document.createElementNS(SVG_NAMESPACE, "line");
+        let svg = document.getElementById("mazeSVG");
+        
+        let elPrevious = document.getElementById("solverTip");
+
+        if (elPrevious != null) svg.removeChild(elPrevious);
+
+        let x1 = this.maze.columnPixels * (this.getPrevX() + 1 / 2);   
+        let y1 = this.maze.rowPixels * (this.getPrevY() + 1 / 2);   
+        let x2 = this.maze.columnPixels * (this.getX() + 1 / 2);   
+        let y2 = this.maze.rowPixels * (this.getY() + 1 / 2);   
+
+        el.setAttribute("x1", x1);
+        el.setAttribute("y1", y1);
+        // el.setAttribute("x2", x2);
+        // el.setAttribute("y2", y2);
+        el.setAttribute("stroke", this.color.getCode());
+        el.setAttribute("stroke-width", this.maze.columnPixels);
+        // el.setAttribute("stroke-opacity", 0.5);
+        el.setAttribute("stroke-linecap", "round");
+        el.setAttribute("id", "solverTip");
+
+
+        let animEl = document.createElementNS(SVG_NAMESPACE, "animate");
+
+        if (x2 !== x1)
+        {
+            el.setAttribute("y2", y2);
+            animEl.setAttribute("attributeName", "x2");
+            animEl.setAttribute("from", x1);
+            animEl.setAttribute("to", x2);
+
+        }
+
+        else if (y2 !== y1)
+        {
+            el.setAttribute("x2", x2);
+            animEl.setAttribute("attributeName", "y2");
+            animEl.setAttribute("from", y1);
+            animEl.setAttribute("to", y2);
+
+        }
+
+        animEl.setAttribute("fill", "freeze");
+        animEl.setAttribute("dur", "5s");
+        animEl.setAttribute("repeatCount", "5");
+
+        el.appendChild(animEl);
+
+
+
+        svg.appendChild(el);
+    }
+
     hide()
     {
         let svg = document.getElementById("mazeSVG");        
