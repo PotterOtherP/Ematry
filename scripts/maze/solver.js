@@ -312,7 +312,7 @@ class Solver {
         el.setAttribute("fill", "none");
         el.setAttribute("stroke", this.color.getCode());
         el.setAttribute("stroke-width", this.maze.columnPixels);
-        el.setAttribute("stroke-opacity", 0.5);
+        // el.setAttribute("stroke-opacity", 0.5);
         el.setAttribute("stroke-linecap", "round");
         el.setAttribute("id", "solverPL");
         svg.appendChild(el);
@@ -335,8 +335,8 @@ class Solver {
 
         el.setAttribute("x1", x1);
         el.setAttribute("y1", y1);
-        // el.setAttribute("x2", x2);
-        // el.setAttribute("y2", y2);
+        el.setAttribute("x2", x1);
+        el.setAttribute("y2", y1);
         el.setAttribute("stroke", this.color.getCode());
         el.setAttribute("stroke-width", this.maze.columnPixels);
         // el.setAttribute("stroke-opacity", 0.5);
@@ -345,11 +345,14 @@ class Solver {
 
 
         let animEl = document.createElementNS(SVG_NAMESPACE, "animate");
+        animEl.setAttribute("attributeType", "XML");
+        animEl.setAttribute("begin", "indefinite");
 
         if (x2 !== x1)
         {
             el.setAttribute("y2", y2);
             animEl.setAttribute("attributeName", "x2");
+
             animEl.setAttribute("from", x1);
             animEl.setAttribute("to", x2);
 
@@ -359,20 +362,78 @@ class Solver {
         {
             el.setAttribute("x2", x2);
             animEl.setAttribute("attributeName", "y2");
+
             animEl.setAttribute("from", y1);
             animEl.setAttribute("to", y2);
-
         }
 
         animEl.setAttribute("fill", "freeze");
-        animEl.setAttribute("dur", "5s");
-        animEl.setAttribute("repeatCount", "5");
+        animEl.setAttribute("dur", "0.2s");
 
         el.appendChild(animEl);
 
+        svg.appendChild(el);
 
+        animEl.beginElement();
+    }
+
+
+    shrinkTip()
+    {
+        let el = document.createElementNS(SVG_NAMESPACE, "line");
+        let svg = document.getElementById("mazeSVG");
+        
+        let elPrevious = document.getElementById("solverTip");
+
+        if (elPrevious != null) svg.removeChild(elPrevious);
+
+        let x1 = this.maze.columnPixels * (this.getPrevX() + 1 / 2);   
+        let y1 = this.maze.rowPixels * (this.getPrevY() + 1 / 2);   
+        let x2 = this.maze.columnPixels * (this.getX() + 1 / 2);   
+        let y2 = this.maze.rowPixels * (this.getY() + 1 / 2);   
+
+        el.setAttribute("x1", x1);
+        el.setAttribute("y1", y1);
+        el.setAttribute("x2", x1);
+        el.setAttribute("y2", y1);
+        el.setAttribute("stroke", this.color.getCode());
+        el.setAttribute("stroke-width", this.maze.columnPixels);
+        // el.setAttribute("stroke-opacity", 0.5);
+        el.setAttribute("stroke-linecap", "round");
+        el.setAttribute("id", "solverTip");
+
+
+        let animEl = document.createElementNS(SVG_NAMESPACE, "animate");
+        animEl.setAttribute("attributeType", "XML");
+        animEl.setAttribute("begin", "indefinite");
+
+        if (x2 !== x1)
+        {
+            el.setAttribute("y2", y2);
+            animEl.setAttribute("attributeName", "x2");
+
+            animEl.setAttribute("from", x2);
+            animEl.setAttribute("to", x1);
+
+        }
+
+        else if (y2 !== y1)
+        {
+            el.setAttribute("x2", x2);
+            animEl.setAttribute("attributeName", "y2");
+
+            animEl.setAttribute("from", y2);
+            animEl.setAttribute("to", y1);
+        }
+
+        animEl.setAttribute("fill", "freeze");
+        animEl.setAttribute("dur", "0.2s");
+
+        el.appendChild(animEl);
 
         svg.appendChild(el);
+
+        animEl.beginElement();
     }
 
     hide()
@@ -391,6 +452,7 @@ class Solver {
 
     iterate()
     {
+
         switch (this.orientation)
         {
             // Picks right or left randomly
@@ -399,25 +461,65 @@ class Solver {
                 let roll = getRandom(2);
                 if (roll == 0)
                 {
-                    if (!this.advanceRight()) this.retreat();
+                    if (this.advanceRight())
+                    {
+                        this.draw();
+                        this.growTip();
+                    } 
+                    else
+                    {
+                        this.shrinkTip();
+                        this.retreat();
+                        this.draw();
+                    }
                 }
 
                 else
                 {
-                    if (!this.advanceLeft()) this.retreat();
+                    if (this.advanceLeft())
+                    {
+                        this.draw();
+                        this.growTip();
+                    } 
+                    else
+                    {
+                        this.shrinkTip();
+                        this.retreat();
+                        this.draw();
+                    }
                 }
             } break;
 
             // Always goes right
             case 1:
             {
-                if (!this.advanceRight()) this.retreat();
+                if (this.advanceRight())
+                {
+                    this.growTip();
+                    this.draw();
+                } 
+                else
+                {
+                    this.shrinkTip();
+                    this.retreat();
+                    this.draw();
+                }
             } break;
 
             // Always goes left
             case 2:
             {
-                if (!this.advanceLeft()) this.retreat();
+                if (this.advanceLeft())
+                    {
+                        this.draw();
+                        this.growTip();
+                    } 
+                    else
+                    {
+                        this.shrinkTip();
+                        this.retreat();
+                        this.draw();
+                    }
             } break;
 
             default: {} break;
@@ -459,7 +561,34 @@ class Solver {
             }
             ++while_control;
 
-            this.iterate();
+            switch (this.orientation)
+            {
+                case 0:
+                {
+                    let roll = getRandom(2);
+                    if (roll == 0)
+                    {
+                        if (!this.advanceRight()) this.retreat();
+                    }
+
+                    else
+                    {
+                        if (!this.advanceLeft()) this.retreat();
+                    }
+                } break;
+
+                case 1:
+                {
+                    if (!this.advanceRight()) this.retreat();
+                } break;
+
+                case 2:
+                {
+                    if (!this.advanceLeft()) this.retreat();
+                } break;
+
+                default: {} break;
+            }
 
             if (this.isSolved())
             {

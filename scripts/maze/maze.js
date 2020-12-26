@@ -2,6 +2,7 @@ const SVG_NAMESPACE = "http://www.w3.org/2000/svg";
 
 let newMaze = null;
 let solution = null;
+let sol = null;
 let solutionVisible = false;
 let player = null;
 
@@ -11,6 +12,9 @@ function generate()
     setText("Click on Generate New to create a new maze!");
 
     newMaze = new Maze(document.getElementById("complexity-select").value);
+
+    sol = new Solver(newMaze, 1);
+
 
     document.getElementById("mazeSVG").removeEventListener("click", generate);
 
@@ -28,18 +32,47 @@ function generate()
 
     document.getElementById("button_solve").removeAttribute("disabled");
     document.getElementById("button_solution").removeAttribute("disabled");
-    // document.getElementById("button_race").removeAttribute("disabled");
+    document.getElementById("button_race").removeAttribute("disabled");
     // document.getElementById("button_save").removeAttribute("disabled");
     // document.getElementById("button_grid").removeAttribute("disabled");
 
     document.getElementById("button_solve").addEventListener("click", playerSolve);
     document.getElementById("button_solution").addEventListener("click", computerSolve);
-    // document.getElementById("button_race").addEventListener("click", race);
+    document.getElementById("button_race").addEventListener("click", race);
     // document.getElementById("button_save").addEventListener("click", save);
     // document.getElementById("button_grid").addEventListener("click", showGrid);
     // document.getElementById("button_grid").innerHTML = "Show Grid";
 
 }
+
+function countToTen(n)
+{
+    console.log(n + " mississippi");
+
+    if (n < 10)
+    {
+        window.setTimeout(countToTen, 1000, (n + 1));
+    }
+}
+
+function race()
+{
+    // sol.draw();
+    sol.iterate();
+
+    if (!sol.isSolved())
+    {
+        window.setTimeout(race, 200);
+    }
+
+    else
+    {
+        sol = new Solver(newMaze, 1);
+    }
+
+}
+
+
 
 function getRandom(int)
 {
