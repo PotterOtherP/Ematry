@@ -75,9 +75,14 @@ function beginRace()
 
     if (!raceInProgress)
     {
+        document.getElementById("button_solve").setAttribute("disabled", true);
+        if (sol != null ) sol.hide();
+        if (sol2 != null) sol2.hide();
         let roll = getRandom(3);
-        sol = new Solver(newMaze, (roll + 1) % 3);
-        // sol2 = new Solver(newMaze, (roll + 2) % 3);
+        sol = new Solver(newMaze, (roll + 1) % 3, "solverOne");
+        // sol = new Solver(newMaze, 1, "solverOne");
+        sol2 = new Solver(newMaze, (roll + 2) % 3, "solverTwo");
+        // sol2 = new Solver(newMaze, 2, "solverTwo");
 
         race();
     }
@@ -85,6 +90,7 @@ function beginRace()
     else
     {
         console.log("Race currently in progress");
+        setText("Race currently in progress");
     }
 }
 
@@ -93,11 +99,10 @@ function race()
     sol.draw();
     sol.iterate();
 
-    // sol2.draw();
-    // sol2.iterate();
+    sol2.draw();
+    sol2.iterate();
 
-    // if (!sol.isSolved() || !sol2.isSolved())
-    if (!sol.isSolved())
+    if (!sol.isSolved() && !sol2.isSolved())
     {
         raceInProgress = true;
         raceTimeoutID = window.setTimeout(race, 5);
@@ -105,7 +110,11 @@ function race()
 
     else
     {
+        if (sol.isSolved()) sol.draw();
+        if (sol2.isSolved()) sol2.draw();
+
         raceInProgress = false;
+        document.getElementById("button_solve").removeAttribute("disabled");
     }
 
 }
@@ -125,7 +134,7 @@ function computerSolve()
 
     if (!solutionVisible)
     {
-        solution = new Solver(newMaze, 1);
+        solution = new Solver(newMaze, 1, "compSol");
         solution.solveMaze();
         solution.draw();
 

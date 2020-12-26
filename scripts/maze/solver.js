@@ -3,7 +3,7 @@ const MAX_SOLUTION_ITERATIONS = 50000;
 class Solver {
 
 
-    constructor(maze, orient)
+    constructor(maze, orient, name)
     {
         this.maze = maze;
 
@@ -11,6 +11,7 @@ class Solver {
         this.path = [{x: maze.startX, y: maze.startY}];
         this.direction = 2;
         this.orientation = orient;
+        this.name = name;
 
         if (this.orientation < 0 || this.orientation > 2)
             this.orientation = 1;
@@ -35,6 +36,8 @@ class Solver {
     {
         let sx = this.getX();
         let sy = this.getY();
+
+        if (sx >= this.maze.wall_right || sy >= this.maze.wall_bottom) return true;
 
         switch (this.direction)
         {
@@ -160,6 +163,8 @@ class Solver {
     {
         let sx = this.getX();
         let sy = this.getY();
+
+        if (sx >= this.maze.wall_right || sy >= this.maze.wall_bottom) return true;
 
         switch (this.direction)
         {
@@ -294,7 +299,7 @@ class Solver {
         let el = document.createElementNS(SVG_NAMESPACE, "polyline");
         let svg = document.getElementById("mazeSVG");
         
-        let elPrevious = document.getElementById("solverPL");
+        let elPrevious = document.getElementById(this.name);
 
         if (elPrevious != null) svg.removeChild(elPrevious);
 
@@ -314,7 +319,7 @@ class Solver {
         el.setAttribute("stroke-width", this.maze.columnPixels);
         // el.setAttribute("stroke-opacity", 0.5);
         el.setAttribute("stroke-linecap", "round");
-        el.setAttribute("id", "solverPL");
+        el.setAttribute("id", this.name);
         svg.appendChild(el);
 
     }
@@ -439,9 +444,10 @@ class Solver {
     hide()
     {
         let svg = document.getElementById("mazeSVG");        
-        let elPrevious = document.getElementById("solverPL");
+        let elPrevious = document.getElementById(this.name);
 
         if (elPrevious != null) svg.removeChild(elPrevious);
+
 
     }
 
@@ -616,12 +622,19 @@ class Solver {
 
     setColor()
     {
-        this.color = new ColorRGB(10, 10, 210);
+        this.color = new ColorRGB(255, 255, 255);
 
         if (this.orientation == 0)
-            this.color = new ColorRGB(210, 10, 10);
+            this.color = new ColorRGB(10, 210, 10);
+
+        if (this.orientation == 1)
+            this.color = new ColorRGB(10, 10, 210);
 
         if (this.orientation == 2)
-            this.color = new ColorRGB(10, 210, 10);
+            this.color = new ColorRGB(210, 10, 10);
+
+
+        if (this.name == "compSol")
+            this.color = new ColorRGB(210, 210, 10);
     }
 }
