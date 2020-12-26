@@ -1,10 +1,21 @@
 const SVG_NAMESPACE = "http://www.w3.org/2000/svg";
 
+const RACE_LEVEL_1_MS = 200;
+const RACE_LEVEL_2_MS = 150;
+const RACE_LEVEL_3_MS = 100;
+const RACE_LEVEL_4_MS = 50;
+const RACE_LEVEL_5_MS = 10;
+const RACE_LEVEL_6_MS = 5;
+let raceTimer = 0;
+
 let newMaze = null;
 let solution = null;
 let sol = null;
+let sol2 = null;
 let solutionVisible = false;
 let player = null;
+let raceInProgress = false;
+let raceTimeoutID = null;
 
 function generate()
 {
@@ -12,8 +23,12 @@ function generate()
     setText("Click on Generate New to create a new maze!");
 
     newMaze = new Maze(document.getElementById("complexity-select").value);
+    sol = new Solver(newMaze, getRandom(3));
+    // sol2 = new Solver(newMaze, getRandom(3));
+    raceInProgress = false;
+    if (raceTimeoutID) window.clearTimeout(raceTimeoutID);
 
-    sol = new Solver(newMaze, 1);
+    
 
 
     document.getElementById("mazeSVG").removeEventListener("click", generate);
@@ -38,7 +53,7 @@ function generate()
 
     document.getElementById("button_solve").addEventListener("click", playerSolve);
     document.getElementById("button_solution").addEventListener("click", computerSolve);
-    document.getElementById("button_race").addEventListener("click", race);
+    document.getElementById("button_race").addEventListener("click", beginRace);
     // document.getElementById("button_save").addEventListener("click", save);
     // document.getElementById("button_grid").addEventListener("click", showGrid);
     // document.getElementById("button_grid").innerHTML = "Show Grid";
@@ -55,19 +70,42 @@ function countToTen(n)
     }
 }
 
-function race()
+function beginRace()
 {
-    // sol.draw();
-    sol.iterate();
 
-    if (!sol.isSolved())
+    if (!raceInProgress)
     {
-        window.setTimeout(race, 200);
+        let roll = getRandom(3);
+        sol = new Solver(newMaze, (roll + 1) % 3);
+        // sol2 = new Solver(newMaze, (roll + 2) % 3);
+
+        race();
     }
 
     else
     {
-        sol = new Solver(newMaze, 1);
+        console.log("Race currently in progress");
+    }
+}
+
+function race()
+{
+    sol.draw();
+    sol.iterate();
+
+    // sol2.draw();
+    // sol2.iterate();
+
+    // if (!sol.isSolved() || !sol2.isSolved())
+    if (!sol.isSolved())
+    {
+        raceInProgress = true;
+        raceTimeoutID = window.setTimeout(race, 5);
+    }
+
+    else
+    {
+        raceInProgress = false;
     }
 
 }

@@ -368,7 +368,7 @@ class Solver {
         }
 
         animEl.setAttribute("fill", "freeze");
-        animEl.setAttribute("dur", "0.2s");
+        animEl.setAttribute("dur", "0.005s");
 
         el.appendChild(animEl);
 
@@ -427,7 +427,7 @@ class Solver {
         }
 
         animEl.setAttribute("fill", "freeze");
-        animEl.setAttribute("dur", "0.2s");
+        animEl.setAttribute("dur", "0.005s");
 
         el.appendChild(animEl);
 
@@ -463,7 +463,6 @@ class Solver {
                 {
                     if (this.advanceRight())
                     {
-                        this.draw();
                         this.growTip();
                     } 
                     else
@@ -478,7 +477,6 @@ class Solver {
                 {
                     if (this.advanceLeft())
                     {
-                        this.draw();
                         this.growTip();
                     } 
                     else
@@ -496,7 +494,6 @@ class Solver {
                 if (this.advanceRight())
                 {
                     this.growTip();
-                    this.draw();
                 } 
                 else
                 {
@@ -510,16 +507,15 @@ class Solver {
             case 2:
             {
                 if (this.advanceLeft())
-                    {
-                        this.draw();
-                        this.growTip();
-                    } 
-                    else
-                    {
-                        this.shrinkTip();
-                        this.retreat();
-                        this.draw();
-                    }
+                {
+                    this.growTip();
+                } 
+                else
+                {
+                    this.shrinkTip();
+                    this.retreat();
+                    this.draw();
+                }
             } break;
 
             default: {} break;
