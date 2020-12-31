@@ -1,4 +1,4 @@
-#gameArena {
+#gameArena, #gameArena-home {
     margin-left: 15%;
     height: 92%;
     width: 85%;
@@ -7,6 +7,10 @@
     display: flex;
     flex-direction: row;
     overflow: auto;
+}
+
+#gameArena-home {
+    flex-direction: column;
 }
 
 #mobile-menu {
@@ -45,7 +49,7 @@
         display: none;
     }
 
-    #gameArena {
+    #gameArena, #gameArena-home {
         width: 100%;
         margin-left: 0;
         margin-right: 0;

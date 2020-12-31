@@ -1145,7 +1145,7 @@ class Actor extends GameObject {
             if (this.thiefAggro)
             {
                 // Retreat, dropping my bag
-                if (this.itPoints == 1)
+                if (this.hitPoints == 1)
                 {
                     output(ObjectStrings.THIEF_FIGHT_RETREAT_2);
                     for (let it of this.inventory)
