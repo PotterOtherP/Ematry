@@ -1563,6 +1563,7 @@ function playerDies()
         state.playerHitPoints = MAX_HIT_POINTS;
 
         let landingSpot = FOREST[getRandom(FOREST.length)];
+        console.log(landingSpot);
 
         relocatePlayerNoClear(landingSpot);
     }

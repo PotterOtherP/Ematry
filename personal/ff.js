@@ -1,63 +1,42 @@
-function run()
+let jobs = [];
+let twoJobs = false;
+
+function roll()
 {
-    console.log("Hey bucket head!");
-
-    let jobs = [
-
-        "White Mage",
-        "Uhlan",
-        "Monk",
-        "Time Battlemage",
-        "Shikari",
-        "Machinist",
-        "Knight",
-        "Black Mage",
-        "Red Battlemage",
-        "Bushi",
-        "Archer",
-        "Foebreaker"
-    ];
-
-    let rollButton = document.getElementById("roll");
-    rollButton.addEventListener("click", run);
+    jobs = shuffle(jobs);
+    
 
     let el = document.getElementById("vaan");
-    let x = getRandom(jobs.length);
-    el.innerHTML = "Vaan: " + jobs[x];
-    jobs = remove(jobs, x);
-    console.log(jobs);
+    el.innerHTML = "Vaan: " + jobs[0] + (twoJobs? (" + " + jobs[6]) : "");
 
     el = document.getElementById("penelo");
-    x = getRandom(jobs.length);
-    el.innerHTML = "Penelo: " + jobs[x];
-    jobs = remove(jobs, x);
-    console.log(jobs);
+    el.innerHTML = "Penelo: " + jobs[1] + (twoJobs? (" + " + jobs[7]) : "");
 
     el = document.getElementById("balthier");
-    x = getRandom(jobs.length);
-    el.innerHTML = "Balthier: " + jobs[x];
-    jobs = remove(jobs, x);
-    console.log(jobs);
+    el.innerHTML = "Balthier: " + jobs[2] + (twoJobs? (" + " + jobs[8]) : "");
 
     el = document.getElementById("fran");
-    x = getRandom(jobs.length);
-    el.innerHTML = "Fran: " + jobs[x];
-    jobs = remove(jobs, x);
-    console.log(jobs);
+    el.innerHTML = "Fran: " + jobs[3] + (twoJobs? (" + " + jobs[9]) : "");
 
     el = document.getElementById("basch");
-    x = getRandom(jobs.length);
-    el.innerHTML = "Basch: " + jobs[x];
-    jobs = remove(jobs, x);
-    console.log(jobs);
+    el.innerHTML = "Basch: " + jobs[4] + (twoJobs? (" + " + jobs[10]) : "");
 
     el = document.getElementById("ashe");
-    x = getRandom(jobs.length);
-    el.innerHTML = "Ashe: " + jobs[x];
-    jobs = remove(jobs, x);
-    console.log(jobs);
+    el.innerHTML = "Ashe: " + jobs[5] + (twoJobs? (" + " + jobs[11]) : "");
 
     
+}
+
+function rollOne()
+{
+    twoJobs = false;
+    roll();
+}
+
+function rollTwo()
+{
+    twoJobs = true;
+    roll();
 }
 
 function getRandom(n)
@@ -78,8 +57,45 @@ function remove(arr, n)
     return newArr;
 }
 
+function shuffle(arr)
+{
+    let result = [];
+
+    while (arr.length > 0)
+    {
+        let n = getRandom(arr.length);
+        result.push(arr[n]);
+        arr = remove(arr, n);
+
+    }
+
+    return result;
+}
+
 
 window.onload = function()
 {
-    run();
+    console.log("Hey bucket head!");
+
+    jobs = [
+
+        "White Mage",
+        "Uhlan",
+        "Monk",
+        "Time Battlemage",
+        "Shikari",
+        "Machinist",
+        "Knight",
+        "Black Mage",
+        "Red Battlemage",
+        "Bushi",
+        "Archer",
+        "Foebreaker"
+    ];
+
+    let rollButton = document.getElementById("roll-1");
+    rollButton.addEventListener("click", rollOne);
+
+    let rollButtonTwo = document.getElementById("roll-2");
+    rollButtonTwo.addEventListener("click", rollTwo);
 }
